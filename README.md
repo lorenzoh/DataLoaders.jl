@@ -2,13 +2,13 @@
 
 A parallel iterator for large machine learning datasets that don't fit into memory inspired by PyTorch's `DataLoader` class.
 
-Uses `MLDataUtils.jl`'s [Data Access Pattern](https://mldatautilsjl.readthedocs.io/en/latest/data/pattern.html), so many data containers work out of the box and custom containers are easily supported by implementing `LearnBase.getobs` and `LearnBase.nobs`.
+It uses [`ThreadPools.jl`](https://github.com/tro3/ThreadPools.jl) to process batches in parallel while keeping the primary thread free.
+
+Utilizing `MLDataUtils.jl`'s [Data Access Pattern](https://mldatautilsjl.readthedocs.io/en/latest/data/pattern.html), so many data containers work out of the box and custom containers are easily supported by implementing `LearnBase.getobs` and `LearnBase.nobs`.
 
 ## Usage
 
-
 ### Options
-
 
 #### DataLoader(dataset, batchsize; kwargs...)
 
@@ -41,7 +41,7 @@ for batch in dataloader
 end
 ```
 
-Note: if your dataset fits into memory like in this toy example, you don't need  parallel workers
+Note: if your dataset fits into memory like in this toy example, you don't need parallel workers
 
 ### Custom data container example
 
@@ -69,3 +69,5 @@ for batch in dataloader
     # do your stuff
 end
 ```
+
+Note: To use multiple workers (default behavior), you have to set the `JULIA_NUM_THREADS` environment variable before starting your session.
