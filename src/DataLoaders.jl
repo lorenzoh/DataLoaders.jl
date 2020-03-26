@@ -11,12 +11,13 @@ include("./collate.jl")
 
 mutable struct DataLoader
     dataset
-    batchsize::Integer
+    batchsize::Int
     shuffle::Bool
-    numworkers::Integer
+    numworkers::Int
     transformfn
     collatefn
     droplast::Bool
+    splitxyfn
     _results::Union{Nothing, ResultIterator}
 end
 
@@ -26,12 +27,12 @@ end
 # Arguments
 
 - `dataset`: A data container supporting the `LearnBase` data access pattern
-- `batchsize::Integer = 1`: Number of samples to batch together
+- `batchsize::Int = 1`: Number of samples to batch together
 
 # Keyword arguments
 
 - `shuffle::Bool = true`: Whether to shuffle the observations before iterating
-- `numworkers::Integer = max(1, Threads.nthreads() - 1)`: Number of workers to
+- `numworkers::Int = max(1, Threads.nthreads() - 1)`: Number of workers to
   spawn to load data in parallel
 - `transformfn`: Function that is applied to individual samples before batching
 - `collatefn`: Function that collates multiple samples into a batch. For default
@@ -39,7 +40,8 @@ end
 - `droplast::Bool = false`: Whether to drop the last batch when `nobs(dataset)` is
   not divisible by `batchsize`. `true` ensures all batches have the same size, but
   some samples might be dropped
-
+- `splitxyfn = splitxy`: Function that splits a batch into input and target. For
+  default behavior, see [`splitxy`](@ref)
 """
 function DataLoader(
         dataset,
@@ -48,6 +50,7 @@ function DataLoader(
         numworkers = max(1, Threads.nthreads() - 1),
         transformfn = identity,
         collatefn = collate,
+        splitxyfn = splitxy,
         droplast = false)
     return DataLoader(
         dataset,
@@ -57,6 +60,7 @@ function DataLoader(
         transformfn,
         collatefn,
         droplast,
+        splitxyfn,
         nothing)
 end
 
@@ -73,8 +77,7 @@ function Base.iterate(dl::DataLoader, state)
     !isnothing(iter) || return nothing
 
     if iter[1] isa Exception
-        close(dl._results.pool.outq)
-        close(dl._results.pool.inq)
+        forceclose(dl._results.pool)
         throw(iter[1])
     else
         return iter
@@ -85,18 +88,24 @@ function createworkerpool(dl::DataLoader, batchindices)
     workerpool = QueuePool(2, dl.numworkers)
 
     @async begin
-        for idxs in batchindices
-            put!(
-                workerpool,
-                loadbatch,
-                dl.dataset, idxs, dl.collatefn, dl.transformfn)
+        try
+            for idxs in batchindices
+                put!(
+                    workerpool,
+                    loadbatch,
+                    dl.dataset, idxs, dl.collatefn, dl.transformfn, dl.splitxyfn)
+            end
+            close(workerpool)
+        catch e
+            @error e
+            forceclose(workerpool)
+            throw(e)
         end
-        close(workerpool)
     end
     return workerpool
 end
 
-show(io::IO, dl::DataLoader) = print(io, "DataLoader (", length(dl), " batches, ", dl.numworkers, " threads)")
+Base.show(io::IO, dl::DataLoader) = print(io, "DataLoader (", length(dl), " batches, ", dl.numworkers, " threads)")
 
 
 # Utils
@@ -119,14 +128,30 @@ function getbatchindices(n, batchsize, shuffle = true, droplast = false)
 end
 
 
-function loadbatch(dataset, idxs, collatefn, transformfn)
+function loadbatch(dataset, idxs, collatefn, transformfn, splitxyfn)
+    batch = collatefn([splitxyfn(transformfn(getobs(dataset, idx))) for idx in idxs])
+    return batch
+
     try
-        batch = collatefn([transformfn(getobs(dataset, idx)) for idx in idxs])
+        batch = collatefn([splitxyfn(transformfn(getobs(dataset, idx))) for idx in idxs])
         return batch
     catch e
+        @show e
+        throw(e)
         return e
     end
 end
+
+
+splitxy(sample::NTuple{2}) = sample
+splitxy(sample::Dict) = (sample[:x], sample[:y])
+
+
+function forceclose(pool::QueuePool)
+    close(pool.inq)
+    close(pool.outq)
+end
+
 
 export DataLoader, collate
 
