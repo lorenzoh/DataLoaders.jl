@@ -3,10 +3,11 @@ uuid = "2e981812-ef13-4a9c-bfa0-ab13047b12a9"
 authors = ["lorenzoh <lorenz.ohly@gmail.com>"]
 version = "0.1.0"
 
-[compat]
-julia = "1"
-
 [deps]
 LearnBase = "7f8f8fb0-2700-5f03-b4bd-41f8cfc144b6"
+MLDataPattern = "9920b226-0b2a-5f5f-9153-9aa70a013f8b"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 ThreadPools = "b189fb0b-2eb5-4ed4-bc0c-d34c51242431"
+
+[compat]
+julia = "1"

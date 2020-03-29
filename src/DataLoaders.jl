@@ -1,6 +1,6 @@
 module DataLoaders
 
-using MLDataUtils
+using MLDataPattern
 using ThreadPools: QueuePool, ResultIterator, results
 using LearnBase
 using Random: shuffle!
@@ -13,7 +13,7 @@ mutable struct DataLoader
     dataset
     batchsize::Int
     shuffle::Bool
-    numworkers::Int
+    numworkers::Union{Nothing, Int}
     transformfn
     collatefn
     droplast::Bool
@@ -47,10 +47,10 @@ function DataLoader(
         dataset,
         batchsize = 1;
         shuffle = true,
-        numworkers = max(1, Threads.nthreads() - 1),
+        numworkers = nothing,
         transformfn = identity,
         collatefn = collate,
-        splitxyfn = splitxy,
+        splitxyfn = identity,
         droplast = false)
     return DataLoader(
         dataset,
@@ -85,7 +85,11 @@ function Base.iterate(dl::DataLoader, state)
 end
 
 function createworkerpool(dl::DataLoader, batchindices)
-    workerpool = QueuePool(2, dl.numworkers)
+    if isnothing(dl.numworkers)
+        workerpool = QueuePool(1, 1)
+    else
+        workerpool = QueuePool(2, dl.numworkers)
+    end
 
     @async begin
         try
@@ -137,7 +141,6 @@ function loadbatch(dataset, idxs, collatefn, transformfn, splitxyfn)
         return batch
     catch e
         @show e
-        throw(e)
         return e
     end
 end
