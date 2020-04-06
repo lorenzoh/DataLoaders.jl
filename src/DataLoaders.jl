@@ -140,7 +140,6 @@ function loadbatch(dataset, idxs, collatefn, transformfn, splitxyfn)
         batch = collatefn([splitxyfn(transformfn(getobs(dataset, idx))) for idx in idxs])
         return batch
     catch e
-        @show e
         return e
     end
 end
@@ -155,7 +154,18 @@ function forceclose(pool::QueuePool)
     close(pool.outq)
 end
 
+function getsample(dl::DataLoader, idx; transform = true, split = false)
+    sample = getobs(dl.dataset, idx)
+    if transform
+        sample = dl.transformfn(sample)
+        if split 
+            sample = dl.splitxyfn(sample)
+        end
+    end
+    return sample
+end
 
-export DataLoader, collate
+
+export DataLoader, collate, getsample
 
 end # module
