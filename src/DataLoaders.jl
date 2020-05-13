@@ -67,7 +67,7 @@ end
 Base.length(dl::DataLoader) = (dl.droplast ? fld : cld)(nobs(dl.dataset), dl.batchsize)
 
 function Base.iterate(dl::DataLoader)
-    batchindices = getbatchindices(nobs(dl.dataset), dl.batchsize, dl.shuffle, dl.droplast)
+    batchindices = getbatchindices(dl)
     dl._results = results(createworkerpool(dl, batchindices))
     return Base.iterate(dl, nothing)
 end
@@ -76,9 +76,17 @@ function Base.iterate(dl::DataLoader, state)
     iter = Base.iterate(dl._results, state)
     !isnothing(iter) || return nothing
 
-    if iter[1] isa Exception
-        forceclose(dl._results.pool)
-        throw(iter[1])
+    if isnothing(iter)
+        return
+    end
+
+    res, state = iter
+
+    if res isa Tuple && res[2] isa Exception
+        tid, e = res
+        @error "Error on worker thread $tid, closing pool..." error = e
+        closeinout(dl._results.pool)
+        throw(e)
     else
         return iter
     end
@@ -88,7 +96,7 @@ function createworkerpool(dl::DataLoader, batchindices)
     if isnothing(dl.numworkers)
         workerpool = QueuePool(1, 1)
     else
-        workerpool = QueuePool(2, dl.numworkers)
+        workerpool = QueuePool(2, min(Threads.nthreads() - 1, dl.numworkers))
     end
 
     @async begin
@@ -99,11 +107,11 @@ function createworkerpool(dl::DataLoader, batchindices)
                     loadbatch,
                     dl.dataset, idxs, dl.collatefn, dl.transformfn, dl.splitxyfn)
             end
-            close(workerpool)
         catch e
-            @error e
-            forceclose(workerpool)
-            throw(e)
+            println(e)
+            rethrow(e)
+        finally
+            close(workerpool)
         end
     end
     return workerpool
@@ -120,7 +128,7 @@ function getbatchindices(n, batchsize, shuffle = true, droplast = false)
         shuffle!(indices)
     end
 
-    batchindices = []
+    batchindices = Vector{Int}[]
     for i in collect(1:batchsize:n)
         to = min(i+batchsize-1, n)
         if droplast && ((to - i) < batchsize - 1)
@@ -131,16 +139,22 @@ function getbatchindices(n, batchsize, shuffle = true, droplast = false)
     return batchindices
 end
 
+getbatchindices(dl::DataLoader) =
+    getbatchindices(nobs(dl.dataset), dl.batchsize, dl.shuffle, dl.droplast)
 
+"""
+    loadbatch(dataset, idxs, collatefn, transformfn, splitxyfn)
+
+Must not throw an error or Julia will crash! Errors are caught and returned
+to the iterator to be rethrown on the main thread.
+"""
 function loadbatch(dataset, idxs, collatefn, transformfn, splitxyfn)
-    batch = collatefn([splitxyfn(transformfn(getobs(dataset, idx))) for idx in idxs])
-    return batch
-
     try
         batch = collatefn([splitxyfn(transformfn(getobs(dataset, idx))) for idx in idxs])
         return batch
     catch e
-        return e
+        println(e)
+        return (Threads.threadid(), e)
     end
 end
 
@@ -149,16 +163,18 @@ splitxy(sample::NTuple{2}) = sample
 splitxy(sample::Dict) = (sample[:x], sample[:y])
 
 
-function forceclose(pool::QueuePool)
-    close(pool.inq)
-    close(pool.outq)
+function closeinout(pool::QueuePool)
+    @async begin
+        close(pool.inq)
+        close(pool.outq)
+    end
 end
 
 function getsample(dl::DataLoader, idx; transform = true, split = false)
     sample = getobs(dl.dataset, idx)
     if transform
         sample = dl.transformfn(sample)
-        if split 
+        if split
             sample = dl.splitxyfn(sample)
         end
     end
