@@ -2,6 +2,36 @@ using Test
 using TestSetExtensions
 using DataLoaders
 using DataLoaders: getbatchindices
+import LearnBase: nobs, getobs
+
+struct TestDataset
+    n
+    sz
+end
+nobs(ds::TestDataset) = ds.n
+getobs(ds::TestDataset, ::Int) = (rand(Float32, ds.sz[1], ds.sz[2], 3), rand(Float32, 10))
+
+@testset ExtendedTestSet "" begin
+    ds = TestDataset(1024, (128, 128))
+
+    @testset ExtendedTestSet "Single-Threaded" begin
+        dl = DataLoader(ds, numworkers = 1)
+        @test_nowarn for batch in dl end
+    end
+
+    @testset ExtendedTestSet "Multi-Threaded" begin
+        if Threads.nthreads() == 1
+            @warn "Can't run multi-threaded tests for `DataLoader`"
+            numworkers = 1
+        else
+            numworkers = Threads.nthreads() - 1
+        end
+        dl = DataLoader(ds, numworkers = numworkers)
+        @test_nowarn for batch in dl end
+    end
+
+end
+
 
 @testset ExtendedTestSet "DataLoaders.jl tests" begin
     @testset ExtendedTestSet "collate" begin
@@ -20,15 +50,23 @@ using DataLoaders: getbatchindices
         @test length(getbatchindices(100, 10, true)) == 10
     end
     @testset ExtendedTestSet "DataLoader length" begin
-        dl = DataLoader(collect(1:127), 8, collatefn = identity, droplast = false)
+        dl = DataLoader(collect(1:127), batchsize = 8, collatefn = identity, droplast = false)
         @test length(collect(dl)) == length(dl) == 128 ÷ 8
 
-        dl = DataLoader(collect(1:127), 8, collatefn = identity, droplast = true)
+        dl = DataLoader(collect(1:127), batchsize = 8, collatefn = identity, droplast = true)
         @test length(collect(dl)) == length(dl) == (128 ÷ 8) - 1
     end
 
     @testset ExtendedTestSet "DataLoader data" begin
-        dl = DataLoader(collect(1:8), 2, collatefn = identity, shuffle = false, numworkers = 1)
+        dl = DataLoader(collect(1:8), batchsize = 2, collatefn = identity, shuffle = false, numworkers = 1)
         @test collect(dl) == [[1, 2], [3, 4], [5, 6], [7, 8]]
     end
 end
+
+DataLoader(ones(100))
+
+dl = DataLoader(collect(1:1024), batchsize = 2, collatefn = identity, shuffle = false, numworkers = 1)
+@time collect(dl);
+
+dl = DataLoader(collect(1:1024), batchsize = 2, collatefn = identity, shuffle = false, numworkers = 11)
+@time collect(dl);
