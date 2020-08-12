@@ -25,12 +25,11 @@ on error
 end
 # Buffered
 
-mutable struct DataLoaderBuffered{TData, TElem}
+mutable struct DataLoaderBuffered{TData,TElem}
     data::TData
     buffers::Vector{TElem}
-    ch_results::Channel{TElem}
-    ch_buffers::Channel{TElem}
     current::TElem
+    nthreads::Int
     useprimary::Bool
     state::LoaderState
 end
@@ -38,92 +37,102 @@ end
 function DataLoaderBuffered(
     data;
     useprimary = false,
-    )
-    # get one observation as base for the buffers and to find out the element type
-    obs = getobs(data, 1)
-    T = typeof(obs)
-    nthreads = Threads.nthreads() - Int(!useprimary)
+    nthreads = Threads.nthreads() - Int(!useprimary),
+)
 
+    # create buffers
+    obs = getobs(data, 1)
     buffers = [obs]
-    for _ in 1:nthreads
+    for _ = 1:nthreads
         push!(buffers, deepcopy(obs))
     end
 
-    # Create a channel for the buffers and fill it with `nthreads` buffers
-    ch_buffers = Channel{T}(nthreads + 1)
-    @async begin
-        for buf in buffers[2:end]
-            put!(ch_buffers, buf)
-        end
-    end
-
-    ch_results = Channel{T}(nthreads)
-
-    return DataLoaderBuffered(data, ch_results, ch_buffers, obs, useprimary, Done)
+    return DataLoaderBuffered(data, buffers, obs, nthreads, useprimary, Done)
 end
 
 
 Base.length(dl::DataLoaderBuffered) = nobs(dl.data)
 
-function workerfn(dl, i)
-    if dl.state === Failed
-        # an error occured somewhere else
-        @info "Shutting down worker $(Threads.threadid())"
-        error("Shutting down worker")
-    else
-        try
-            buf = take!(dl.ch_buffers)
-            buf = getobs!(buf, dl.data, i)
-            put!(dl.ch_results, buf)
-        catch e
-            dl.state = Failed
-            @error "Error on worker $(Threads.threadid())" error=e
-            error("Shutting down worker")
-        end
+function workerfn(dl, ch_buffers, ch_results, i, t)
+    try
+        buf = take!(ch_buffers)
+        buf = getobs!(buf, dl.data, i)
+        put!(ch_results, buf)
+    catch e
+        dl.state = Failed
+        close(ch_buffers)
+        close(ch_results)
+        @error "Error on worker $(Threads.threadid()), shutting workers down" error = e
+        rethrow()
     end
 end
 
-function Base.iterate(dl::DataLoaderBuffered)
+
+function Base.iterate(dl::DataLoaderBuffered{TData,TElem}) where {TData,TElem}
     dl.state = Running
+    dl.current = dl.buffers[1]
+
+    ch_buffers = Channel{TElem}(dl.nthreads + 1)
+    ch_results = Channel{TElem}(dl.nthreads)
+    index = 0
+    maintask = current_task()
+    state = (ch_buffers, ch_results, index)
+
+    # fill buffer channel
     @async begin
-
-
+        for buf in dl.buffers[2:end]
+            put!(ch_buffers, buf)
+        end
     end
+    # start tasks
     @async begin
         try
             if dl.useprimary
-                @qthreads for i in 1:nobs(dl.data)
-                    workerfn(dl, i)
+                @qthreads for i = 1:nobs(dl.data)
+                    if dl.state !== Failed
+                        workerfn(dl, ch_buffers, ch_results, i, maintask)
+                    else
+                        @info "Shutting down worker $(Thread.threadid())"
+                        error("Shutting down worker $(Thread.threadid())")
+                    end
                 end
             else
-                @qbthreads for i in 1:nobs(dl.data)
-                    workerfn(dl, i)
+                @qbthreads for i = 1:nobs(dl.data)
+                    if dl.state !== Failed
+                        workerfn(dl, ch_buffers, ch_results, i, maintask)
+                    else
+                        error("Shutting down worker $(Thread.threadid())")
+                    end
                 end
             end
         catch e
-            @error "Error while filling task queue" error=e
+            @error "Error while filling task queue" error = e
             dl.state = Failed
             rethrow()
         end
     end
-    return Base.iterate(dl, 0)
+    return Base.iterate(dl, state)
 end
 
+
 function Base.iterate(dl::DataLoaderBuffered, state)
+    ch_buffers, ch_results, index = state
     try
-        if state < nobs(dl.data)
+        if index < nobs(dl.data)
             # Put previously in use buffer back into channel
-            put!(dl.ch_buffers, dl.current)
+            put!(ch_buffers, dl.current)
             # Take the latest result
-            dl.current = take!(dl.ch_results)
-            return dl.current, state + 1
+            dl.current = take!(ch_results)
+            return dl.current, (ch_buffers, ch_results, index + 1)
         else
             dl.state = Done
             return nothing
         end
     catch e
         dl.state = Failed
-        @error "Iterate failed" error=e
+        if e isa InvalidStateException
+            error("Worker task failed")
+        end
         rethrow()
     end
 end
