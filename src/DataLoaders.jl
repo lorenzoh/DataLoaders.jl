@@ -1,12 +1,11 @@
 #=
-TODO:
+
+# TODO
+
 - implement unbuffered version
 - document
-- check how errors are handled
 - format structs repr
-- propagate errors to workers
-    - interrupt main thread when worker fails. currently stuck in take! or put!
-    - clean up channels on error. (all buffers should be returned to ch_buffers)
+- check what happens with `shuffleobs` and `datasubset`
 
 # Ideas
 

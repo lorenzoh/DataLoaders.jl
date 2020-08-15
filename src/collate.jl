@@ -16,5 +16,6 @@ function collate(samples::AbstractVector{<:NamedTuple})
 end
 
 collate(samples::AbstractVector{<:AbstractArray{T, N}}) where {T, N} = cat(samples...; dims = N + 1)
-
 collate(samples::AbstractVector) = samples
+
+collate(batch::Tuple) = batch

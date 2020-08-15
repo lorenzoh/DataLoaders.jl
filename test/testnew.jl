@@ -10,10 +10,9 @@ struct MockDataset
     sz
 end
 
-Base.first(ds::MockDataset) = LearnBase.getobs(ds, 1)
-LearnBase.getobs(ds::MockDataset, idx::Int) = (sleep(.1); randn(ds.sz...))
+LearnBase.getobs(ds::MockDataset, idx::Int) = (randn(ds.sz...))
 LearnBase.getobs(ds::MockDataset, idxs) = [getobs(ds, idx) for idx in idxs]
-LearnBase.getobs!(buf, ds::MockDataset, idx::Int) = buf
+LearnBase.getobs!(buf, ds::MockDataset, idx::Int) = fill!(buf, 0.3)
 LearnBase.getobs!(bufs, ds::MockDataset, idxs) = map(idx -> LearnBase.getobs!(buf, ds, idx), idxs)
 LearnBase.nobs(ds::MockDataset) = ds.n
 

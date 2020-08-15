@@ -6,20 +6,21 @@
 
 A parallel iterator for large machine learning datasets that don't fit into memory inspired by PyTorch's `DataLoader` class.
 
-It uses [`ThreadPools.jl`](https://github.com/tro3/ThreadPools.jl) to process batches in parallel while keeping the primary thread free.
+It uses [`ThreadPools.jl`](https://github.com/tro3/ThreadPools.jl) to load data in parallel while keeping the primary thread free. It also supports loading data fully inplace to avoid unnecessary allocations.
 
-Utilizing `LearnBase.jl`'s [Data Access Pattern](https://mldatautilsjl.readthedocs.io/en/latest/data/pattern.html), so many data containers work out of the box and custom containers are easily supported by implementing `LearnBase.getobs` and `LearnBase.nobs`.
+Utilizing `LearnBase.jl`'s [Data Access Pattern](https://mldatautilsjl.readthedocs.io/en/latest/data/pattern.html), many data containers work out of the box and custom containers are easily supported by implementing `LearnBase.getobs` and `LearnBase.nobs`, (and optionally `LearnBase.getobs!` for inplace data loading).
 
 ## Usage
 
-### Options
 
-#### DataLoader(dataset, batchsize; kwargs...)
+### BatchLoader(dataset, batchsize)
 
-##### Arguments
+Iterates over observations 
+
+#### Arguments
 
 - `dataset`: A data container supporting the `LearnBase` data access pattern
-- `batchsize::Integer = 1`: Number of samples to batch together
+- `batchsize::Integer`: Number of samples to batch together
 
 ##### Keyword arguments
 
@@ -51,7 +52,7 @@ Note: if your dataset fits into memory like in this toy example, you don't need 
 
 ```julia
 using Images: load
-import LearnBase: getobs, nobs
+import LearnBase
 
 # Custom data container
 struct ImageDataset
@@ -59,17 +60,30 @@ struct ImageDataset
 end
 
 # Implementing `LearnBase.jl` interface
-getobs(ds::ImageDataset, idx::Integer) = load(ds.files[idx])
-nobs(ds::ImageDataset) = length(ds.files)
+LearnBase.nobs(ds::ImageDataset) = length(ds.files)
+LearnBase.getobs(ds::ImageDataset, idx::Integer) =
+    load(ds.files[idx], view = true)
+# Optionally implement inplace getter for performance
+# Note this only works if the observations all have the
+# same shape
+LearnBase.getobs!(buf, ds, idx) = ...
 
 
 # Now you can use your custom container
 
 dataset = ImageDataset(["image1.jpg", "image2.jpg", ...])
 
-dataloader = DataLoader(dataset, 8, shuffle = true)
+# To iterate over observations
+dataloader = DataLoader(dataset)
 
-for batch in dataloader
+for obs in dataloader
+    # do your stuff
+end
+
+# To iterate over batches
+batchloader = BatchLoader(dataset, 16)
+
+for obs in batchloader
     # do your stuff
 end
 ```
