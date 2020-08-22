@@ -24,11 +24,14 @@ end
 Base.length(A::BatchViewCollated) = A.count
 LearnBase.nobs(bv::BatchViewCollated) = length(bv)
 
-LearnBase.getobs(bv::BatchViewCollated, batchindex::Int) =
-    collate(getobs(bv.data, MLDataPattern._batchrange(bv.size, batchindex)))
+function LearnBase.getobs(bv::BatchViewCollated, batchindex::Int)
+    idxs = MLDataPattern._batchrange(bv.size, batchindex)
+    collate([getobs(bv.data, idx) for idx in idxs])
+end
 
 function LearnBase.getobs!(buf, bv::BatchViewCollated, batchindex::Int)
     indices = MLDataPattern._batchrange(bv.size, batchindex)
+    # TODO: Fix for partial batches
     for (idx, obs) in zip(indices, obsslices(buf))
         getobs!(obs, bv.data, idx)
     end
