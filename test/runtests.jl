@@ -1,72 +1,70 @@
 using Test
 using TestSetExtensions
 using DataLoaders
-using DataLoaders: getbatchindices
-import LearnBase: nobs, getobs
+using DataLoaders: collate
+using MLDataPattern
+using LearnBase
 
-struct TestDataset
+
+@testset ExtendedTestSet "collate" begin
+    @test collate([([1, 2], 3), ([4, 5], 6)]) == ([1 4; 2 5], [3, 6])
+    @test collate([(x = [1, 2], y = 3), (x = [4, 5], y = 6)]) == (x = [1 4; 2 5], y = [3, 6])
+    @test collate([Dict("x" => [1, 2], "y" => 3), Dict("x" => [4, 5], "y" => 6)]) == Dict("x" => [1 4; 2 5], "y" => [3, 6])
+    @test collate([(1, 2), (3, 4)]) == ([1, 3], [2, 4])
+end
+
+@testset ExtendedTestSet "obsslices" begin
+
+end
+
+dataset = rand(128, 10000)  # 1024 observations of size 512
+getobs(dataset, 1)
+
+dl = BatchLoader(dataset, 8)
+@time buf = getobs(dl.data, 1)
+@time buf = getobs!(buf, dl.data, 1)
+
+@time first(dl)
+@time for obs in dl
+end
+
+@testset ExtendedTestSet "BatchLoader" begin
+    dataset = rand(128, 10000)
+    dataloader = BatchLoader(dataset, 16)
+    @test_nowarn for batch in dataloader
+        @assert size(batch) == (128, 16)
+    end
+end
+
+
+struct MockDataset
     n
     sz
 end
-nobs(ds::TestDataset) = ds.n
-getobs(ds::TestDataset, ::Int) = (rand(Float32, ds.sz[1], ds.sz[2], 3), rand(Float32, 10))
+
+LearnBase.getobs(ds::MockDataset, idx::Int) = (randn(ds.sz...))
+LearnBase.getobs(ds::MockDataset, idxs) = [getobs(ds, idx) for idx in idxs]
+LearnBase.getobs!(buf, ds::MockDataset, idx::Int) = fill!(buf, 0.3)
+LearnBase.getobs!(bufs, ds::MockDataset, idxs) = map(idx -> LearnBase.getobs!(buf, ds, idx), idxs)
+LearnBase.nobs(ds::MockDataset) = ds.n
+
+ds = MockDataset(128, (16, 16))
+
 
 @testset ExtendedTestSet "" begin
-    ds = TestDataset(1024, (128, 128))
-
-    @testset ExtendedTestSet "Single-Threaded" begin
-        dl = DataLoader(ds, numworkers = 1)
-        @test_nowarn for batch in dl end
-    end
-
-    @testset ExtendedTestSet "Multi-Threaded" begin
-        if Threads.nthreads() == 1
-            @warn "Can't run multi-threaded tests for `DataLoader`"
-            numworkers = 1
-        else
-            numworkers = Threads.nthreads() - 1
-        end
-        dl = DataLoader(ds, numworkers = numworkers)
-        @test_nowarn for batch in dl end
-    end
-
+    @test_nowarn bv = DataLoaders.BatchView(ds, 4)
+    bv = DataLoaders.BatchView(ds, 4)
+    @test_nowarn buf = getobs(bv, 1)
 end
 
 
-@testset ExtendedTestSet "DataLoaders.jl tests" begin
-    @testset ExtendedTestSet "collate" begin
+x = rand(128, 10000)  #  10000 observations of size 128
+y = rand(1, 10000)
 
-        @test collate([([1, 2], 3), ([4, 5], 6)]) == ([1 4; 2 5], [3, 6])
-        @test collate([(x = [1, 2], y = 3), (x = [4, 5], y = 6)]) == (x = [1 4; 2 5], y = [3, 6])
-        @test collate([Dict("x" => [1, 2], "y" => 3), Dict("x" => [4, 5], "y" => 6)]) == Dict("x" => [1 4; 2 5], "y" => [3, 6])
+dataloader = BatchLoader((x, y), 16)
 
-        @test collate([(1, 2), (3, 4)]) == ([1, 3], [2, 4])
-    end
+getobs!(getobs(dataloader.data, 1), dataloader.data, 1)
 
-    @testset ExtendedTestSet "getbatchindices" begin
-        @test getbatchindices(6, 2, false) == [[1, 2], [3, 4], [5, 6]]
-        @test getbatchindices(5, 2, false, false) == [[1, 2], [3, 4], [5]]
-        @test getbatchindices(5, 2, false, true) == [[1, 2], [3, 4]]
-        @test length(getbatchindices(100, 10, true)) == 10
-    end
-    @testset ExtendedTestSet "DataLoader length" begin
-        dl = DataLoader(collect(1:127), batchsize = 8, collatefn = identity, droplast = false)
-        @test length(collect(dl)) == length(dl) == 128 ÷ 8
-
-        dl = DataLoader(collect(1:127), batchsize = 8, collatefn = identity, droplast = true)
-        @test length(collect(dl)) == length(dl) == (128 ÷ 8) - 1
-    end
-
-    @testset ExtendedTestSet "DataLoader data" begin
-        dl = DataLoader(collect(1:8), batchsize = 2, collatefn = identity, shuffle = false, numworkers = 1)
-        @test collect(dl) == [[1, 2], [3, 4], [5, 6], [7, 8]]
-    end
+for batch in dataloader
+    @assert size(batch) == (128, 16)
 end
-
-DataLoader(ones(100))
-
-dl = DataLoader(collect(1:1024), batchsize = 2, collatefn = identity, shuffle = false, numworkers = 1)
-@time collect(dl);
-
-dl = DataLoader(collect(1:1024), batchsize = 2, collatefn = identity, shuffle = false, numworkers = 11)
-@time collect(dl);
