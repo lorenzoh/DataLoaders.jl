@@ -1,37 +1,18 @@
 
-#=
-
-on creation: Done
-on iterate: Running
-on finish iterate: Done
-on error or interrupt: Failed
-
-error can occur
-- in `ìterate` under `@qthreads`
--
-
-on error
-- @qthreads is stopped
-- workers are stopped
-- results channel must be cleared and buffers filled back
-
-
-=#
-
-
 
 @enum LoaderState begin
     Done
     Running
     Failed
 end
-# Buffered
+
 
 mutable struct DataLoaderBuffered{TData,TElem}
     data::TData
     buffers::Vector{TElem}
     current::TElem
-    nthreads::Int
+    nworkers::Int
+    buffered::Bool
     useprimary::Bool
     state::LoaderState
 end
@@ -41,8 +22,6 @@ function DataLoaderBuffered(
     useprimary = false,
     nthreads = Threads.nthreads() - Int(!useprimary),
 )
-
-    # create buffers
     obs = getobs(data, 1)
     buffers = [obs]
     for _ = 1:nthreads
@@ -89,22 +68,11 @@ function Base.iterate(dl::DataLoaderBuffered{TData,TElem}) where {TData,TElem}
     # start tasks
     @async begin
         try
-            if dl.useprimary
-                @qthreads for i = 1:nobs(dl.data)
-                    if dl.state !== Failed
-                        workerfn(dl, ch_buffers, ch_results, i, maintask)
-                    else
-                        @info "Shutting down worker $(Thread.threadid())"
-                        error("Shutting down worker $(Thread.threadid())")
-                    end
-                end
-            else
-                @qbthreads for i = 1:nobs(dl.data)
-                    if dl.state !== Failed
-                        workerfn(dl, ch_buffers, ch_results, i, maintask)
-                    else
-                        error("Shutting down worker $(Thread.threadid())")
-                    end
+            @qbthreads for i = 1:nobs(dl.data)
+                if dl.state !== Failed
+                    workerfn(dl, ch_buffers, ch_results, i, maintask)
+                else
+                    error("Shutting down worker $(Thread.threadid())")
                 end
             end
         catch e
@@ -137,16 +105,4 @@ function Base.iterate(dl::DataLoaderBuffered, state)
         end
         rethrow()
     end
-end
-
-
-"""
-handleerror(dl)
-
-Cleans up the buffers channel and results channel
-when an error occurs.
-"""
-function handleerror(dl)
-
-
 end

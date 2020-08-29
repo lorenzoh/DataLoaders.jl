@@ -1,4 +1,3 @@
-# TODO: abstract BatchDims to allow for different schemes
 # TODO: handle `droplast` == false
 
 
@@ -7,7 +6,12 @@ abstract type BatchDim end
 struct BatchDimFirst <: BatchDim end
 struct BatchDimLast <: BatchDim end
 
+"""
+    BatchViewCollated(data, size; droplast = false)
 
+A batch view of container `data` with collated batches of
+size `size`.
+"""
 @with_kw struct BatchViewCollated{TData}
     data::TData
     size::Int
@@ -16,15 +20,11 @@ struct BatchDimLast <: BatchDim end
     batchdim::BatchDim = BatchDimLast()
 end
 
-"""
-    BatchViewCollated(data, size; droplast = true)
-
-A batch view of container `data` with collated batches of
-size `size`.
-"""
-function BatchViewCollated(data, size; droplast = true, batchdim = BatchDimLast())
-    obs = getobs(data, 1)
-    count = nobs(data) ÷ size + (1 - Int(droplast))
+function BatchViewCollated(data, size; droplast = false, batchdim = BatchDimLast())
+    count = nobs(data) ÷ size
+    if !droplast && (nobs(data) % size > 0)
+        count += 1
+    end
     return BatchViewCollated(data, size, count, droplast, batchdim)
 end
 
@@ -60,7 +60,7 @@ size(first(iter)) == (10, 10)
 ```
 """
 obsslices(batch, batchdim = BatchDimLast()) =
-    (obsslice(batch, i, batchdim) for i in 1:_batchsize(batch))
+    (obsslice(batch, i, batchdim) for i in 1:_batchsize(batch, batchdim))
 
 function obsslice(batch::AbstractArray{T, N}, i, ::BatchDimLast) where {T, N}
     return view(batch, [(:) for _ in 1:N-1]..., i)
@@ -79,6 +79,7 @@ function obsslice(batch::Dict, i, batchdim)
 end
 
 
-_batchsize(batch::Tuple) = _batchsize(batch[1])
-_batchsize(batch::Dict) = _batchsize(batch[first(keys(batch))])
-_batchsize(batch::AbstractArray{T, N}) where {T, N} = size(batch, N)
+_batchsize(batch::Tuple, batchdim) = _batchsize(batch[1], batchdim)
+_batchsize(batch::Dict, batchdim) = _batchsize(batch[first(keys(batch))], batchdim)
+_batchsize(batch::AbstractArray{T, N}, ::BatchDimLast) where {T, N} = size(batch, N)
+_batchsize(batch::AbstractArray, ::BatchDimFirst) = size(batch, 1)

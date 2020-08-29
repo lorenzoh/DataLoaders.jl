@@ -4,7 +4,7 @@ Training deep learning models, data loading can quickly become a bottleneck. Whe
 
 To not slow down the training, loading a batch must
 
-- take shorter time than one training step
+- not take longer than one training step
 - not block the main thread; and
 - avoid garbage collection pauses
 

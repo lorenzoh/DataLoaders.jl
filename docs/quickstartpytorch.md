@@ -4,12 +4,32 @@ Like Pytorch's [DataLoader](https://pytorch.org/docs/stable/data.html#torch.util
 this package provides an iterator over your dataset that loads data in parallel in the
 background.
 
-The basic interface is the same. Create a DataLoader with `DataLoader(data, batchsize)`.
+The basic interface is the same: `DataLoader(data, batchsize)`.
 
-## Commonalities
+See [`DataLoader`](#) for all supported options.
 
-- **Dataset interface**: Instead of implementing `mydataset.__getindex__(idx)`
-  and `mydataset.__len__()` you implement `getobs(mydataset, idx)` and `nobs(mydataset)`.
-  Same, same, different name. See [Data containers](docs/datacontainers.md) for specifics.
+## PyTorch vs. `DataLoaders.jl`
 
-- **Collating**: `DataLoader` has the `collate = true` keyword argument.
+### Dataset interface 
+
+The dataset interface for map-style datasets is similar:
+
+PyTorch:
+
+- `mydataset.__getindex__(idx)`
+- `mydataset.__len__()`
+
+DataLoaders.jl:
+
+- `LearnBase.getobs(mydataset, idx)`
+- `LearnBase.nobs(mydataset)`
+
+See [Data containers](datacontainers.md) for specifics.
+
+### Sampling and shuffling
+
+Unlike PyTorch's DataLoader, `DataLoaders.jl` delegates [shuffling, subsetting and sampling](shuffling.md) to existing packages. Consequently there are no `shuffle`, `sampler` and `batch_sampler` arguments.
+
+### Automatic batching
+
+Automatic batching is controlled with the `collate` keyword argument (default `true`). A custom `collate_fn` is not supported.

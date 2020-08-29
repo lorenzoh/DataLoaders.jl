@@ -20,5 +20,5 @@ end
 #
 # ---
 #
-# Let's [next](docs/datacontainers.md) look at a realistic use case
+# Let's [next](/docs/datacontainers.md) look at a realistic use case
 # and show how to support custom data containers.
