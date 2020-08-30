@@ -33,3 +33,7 @@ Unlike PyTorch's DataLoader, `DataLoaders.jl` delegates [shuffling, subsetting a
 ### Automatic batching
 
 Automatic batching is controlled with the `collate` keyword argument (default `true`). A custom `collate_fn` is not supported.
+
+### Partial batches
+
+PyTorch's `drop_last` becomes `partial` for compatibility with [`Flux`](https://github.com/FluxML/Flux.jl)s `DataLoader`.

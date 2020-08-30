@@ -1,3 +1,4 @@
 [deps]
 DataLoaders = "2e981812-ef13-4a9c-bfa0-ab13047b12a9"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Publish = "f065f642-d108-4f50-8aa5-6749150a895a"

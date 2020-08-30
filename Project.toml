@@ -13,3 +13,6 @@ ThreadPools = "b189fb0b-2eb5-4ed4-bc0c-d34c51242431"
 
 [compat]
 julia = "1"
+
+[publish]
+title = "DataLoaders.jl"

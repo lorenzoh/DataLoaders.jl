@@ -5,7 +5,7 @@ A threaded data iterator for machine learning on out-of-memory datasets. Inspire
 
 It uses  to load data **in parallel** while keeping the primary thread free. It can also load data **inplace** to avoid allocations.
 
-Many data containers work out of the box and it is easy to [extend with your own](/docs/datacontainers.md).
+Many data containers work out of the box and it is easy to [extend with your own](docs/datacontainers.md).
 
 `DataLoaders` is built on top of and fully compatible with `MLDataPattern.jl`'s [Data Access Pattern](https://mldatautilsjl.readthedocs.io/en/latest/data/pattern.html), a functional interface for machine learning datasets.
 
@@ -31,7 +31,7 @@ If you get the idea and know it from PyTorch, see [Quickstart for PyTorch users]
 
 Otherwise, read on [here](docs/motivation.md).
 
-Available methods are documented [here](/docstrings.md).
+Available methods are documented [here](docstrings.md).
 
 ## Acknowledgements
 

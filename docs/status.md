@@ -2,17 +2,15 @@
 
 - unify interface
 
-
 ```julia
 # Default options
 DataLoader(
     data, batchsize = 1;
     numworkers = Threads.nthreads() - 1,
     partial = false,
-    shuffle = false,
     collate = true,
     buffered = collate,
-)
+) = AsyncIterBuffered(batchviewcollated(data, batchsize), numworkers)
 
 # Training example
 DataLoader(data, 16, partial = true)
@@ -31,10 +29,10 @@ DataLoader(data, nothing, shuffle = true, collate = false)
 - make sure datasets wrapped in `shuffleobs` and `datasubset`
   support `getobs!`
 - provide
-  - `batchview(droplast = false)`
-  - `batchviewcollated(droplast = false)`
-  - `asyncloader()`
-  - `bufferedasyncloader`
+  - `batchview(partial = false)`
+  - `batchviewcollated(partial = false)`
+  - `AsyncIter(data, numworkers)`
+  - `AsyncIterBuffered(data, numworkers)`
 
 ## Requirements
 
@@ -43,3 +41,7 @@ DataLoader(data, nothing, shuffle = true, collate = false)
 - `shuffle` and `datasubset` work inplace
 - errors on workers or main thread lead to interrupt of both
 - compatible with `ObsDim`s
+
+## ToDo
+
+- fix collation for data containers that don't support `getobs!`

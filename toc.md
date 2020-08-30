@@ -10,7 +10,7 @@
 
 ### Docstrings
 
-- [Reference](/docstrings.md)
+- [Reference](docstrings.md)
 
 ### Source files
 
