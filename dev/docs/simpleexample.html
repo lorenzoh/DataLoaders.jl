@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="generator" content="Publish.jl" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="" />
+    <title>DataLoaders.jl</title>
+    <link rel="stylesheet" href="..&#x2F;normalize.css" />
+    <link rel="stylesheet" href="..&#x2F;tabulator_simple.min.css" />
+    <link rel="stylesheet" href="..&#x2F;publish.css" />
+    <link rel="stylesheet" href="..&#x2F;default.min.css" />
+    <script src="..&#x2F;versions.js"></script>
+    <script src="..&#x2F;lunr.js"></script>
+    <script src="..&#x2F;highlight.min.js"></script>
+    <script src="..&#x2F;tabulator.min.js"></script>
+    <script src="..&#x2F;julia.min.js"></script>
+    <script src="..&#x2F;julia-repl.min.js"></script>
+    <script src="..&#x2F;publish.js"></script>
+    
+</head>
+<body>
+    <div class="menu">
+        <svg id="menu-toggler" title="Contents" onclick="toggleIndexPage();" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6C2 5.44772 2.44772 5 3 5H21C21.5523 5 22 5.44772 22 6C22 6.55228 21.5523 7 21 7H3C2.44772 7 2 6.55228 2 6Z" fill="currentColor" /><path d="M2 12.0322C2 11.4799 2.44772 11.0322 3 11.0322H21C21.5523 11.0322 22 11.4799 22 12.0322C22 12.5845 21.5523 13.0322 21 13.0322H3C2.44772 13.0322 2 12.5845 2 12.0322Z" fill="currentColor" /><path d="M3 17.0645C2.44772 17.0645 2 17.5122 2 18.0645C2 18.6167 2.44772 19.0645 3 19.0645H21C21.5523 19.0645 22 18.6167 22 18.0645C22 17.5122 21.5523 17.0645 21 17.0645H3Z" fill="currentColor" /></svg>
+        <input id="search-input" placeholder="Search">
+        <select id="version-selector"></select>
+    </div>
+    <main id="page"><article><h2 id="a-simple-example"><a href="#a-simple-example" class="anchor"></a>A simple example</h2>
+<p>Let’s have another look at the example from the <a href="README.html">introduction</a>.</p>
+<p>First we create some dummy data of observations and targets:</p>
+<pre><code class="language-julia">x = rand(128, 4096)  # 4096 samples of size (128,)
+y = rand(1, 4096)    # 4096 samples of size (1,)
+</code></pre>
+<p>We then create a <code>DataLoader</code> with batch size 16:</p>
+<pre><code class="language-julia">dataloader = BatchLoader((x, y), 16)
+</code></pre>
+<p>Et voilá, a training loop:</p>
+<pre><code class="language-julia">for (xs, ys) in dataloader  # size(xs) == (128, 16)
+    # optimization step
+end
+</code></pre>
+<p><code>DataLoaders</code> supports many different data containers by building off the interface of
+<a href="https://mldatautilsjl.readthedocs.io/en/latest/data/pattern.html"><code>MLDataPattern.jl</code></a>.
+Above, we pass in a tuple of datasets, hence the batch is also tuple.</p>
+<hr />
+<p>Let’s <a href="/docs/datacontainers.html">next</a> look at a realistic use case
+and show how to support custom data containers.</p>
+</article>
+        <div id="page-navigation">
+            <a id="previous-page" title="Previous" href="motivation.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="next-page" title="Next" href="datacontainers.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
+        </div>
+    </main>
+    <nav id="toc"><h3 id="guide"><a href="#guide" class="anchor"></a>Guide</h3>
+<ul>
+<li><a href="../README.html">Introduction</a></li>
+<li><a href="motivation.html">Motivation</a></li>
+<li><a href="simpleexample.html">A simple example</a></li>
+<li><a href="datacontainers.html">Data containers</a></li>
+<li><a href="shuffling.html">Shuffling, subsetting, sampling</a></li>
+<li><a href="quickstartpytorch.html">QuickStart for PyTorch users</a></li>
+<li><a href="status.html">Project status</a></li>
+</ul>
+<h3 id="docstrings"><a href="#docstrings" class="anchor"></a>Docstrings</h3>
+<ul>
+<li><a href="../docstrings.html">Reference</a></li>
+</ul>
+<h3 id="source-files"><a href="#source-files" class="anchor"></a>Source files</h3>
+<ul>
+<li><a href="../src/DataLoaders.html">DataLoaders.jl</a></li>
+</ul>
+</nav>
+    <footer>
+        Build with <a target="_blank" href="https://github.com/MichaelHatherly/Publish.jl">Publish.jl</a> and the <a target="_blank" href="https://julialang.org">Julia Language.</a>
+    </footer>
+    <script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

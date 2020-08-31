@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="generator" content="Publish.jl" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="" />
+    <title>DataLoaders.jl</title>
+    <link rel="stylesheet" href="..&#x2F;normalize.css" />
+    <link rel="stylesheet" href="..&#x2F;tabulator_simple.min.css" />
+    <link rel="stylesheet" href="..&#x2F;publish.css" />
+    <link rel="stylesheet" href="..&#x2F;default.min.css" />
+    <script src="..&#x2F;versions.js"></script>
+    <script src="..&#x2F;lunr.js"></script>
+    <script src="..&#x2F;highlight.min.js"></script>
+    <script src="..&#x2F;tabulator.min.js"></script>
+    <script src="..&#x2F;julia.min.js"></script>
+    <script src="..&#x2F;julia-repl.min.js"></script>
+    <script src="..&#x2F;publish.js"></script>
+    
+</head>
+<body>
+    <div class="menu">
+        <svg id="menu-toggler" title="Contents" onclick="toggleIndexPage();" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6C2 5.44772 2.44772 5 3 5H21C21.5523 5 22 5.44772 22 6C22 6.55228 21.5523 7 21 7H3C2.44772 7 2 6.55228 2 6Z" fill="currentColor" /><path d="M2 12.0322C2 11.4799 2.44772 11.0322 3 11.0322H21C21.5523 11.0322 22 11.4799 22 12.0322C22 12.5845 21.5523 13.0322 21 13.0322H3C2.44772 13.0322 2 12.5845 2 12.0322Z" fill="currentColor" /><path d="M3 17.0645C2.44772 17.0645 2 17.5122 2 18.0645C2 18.6167 2.44772 19.0645 3 19.0645H21C21.5523 19.0645 22 18.6167 22 18.0645C22 17.5122 21.5523 17.0645 21 17.0645H3Z" fill="currentColor" /></svg>
+        <input id="search-input" placeholder="Search">
+        <select id="version-selector"></select>
+    </div>
+    <main id="page"><article><h1 id="quickstart-for-pytorch-users"><a href="#quickstart-for-pytorch-users" class="anchor"></a>Quickstart for PyTorch users</h1>
+<p>Like Pytorch’s <a href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader">DataLoader</a>,
+this package provides an iterator over your dataset that loads data in parallel in the
+background.</p>
+<p>The basic interface is the same: <code>DataLoader(data, batchsize)</code>.</p>
+<p>See <a href="../docstrings/DataLoaders.DataLoader.html"><code>DataLoader</code></a> for all supported options.</p>
+<h2 id="pytorch-vs-dataloadersjl"><a href="#pytorch-vs-dataloadersjl" class="anchor"></a>PyTorch vs. <code>DataLoaders.jl</code></h2>
+<h3 id="dataset-interface-"><a href="#dataset-interface-" class="anchor"></a>Dataset interface</h3>
+<p>The dataset interface for map-style datasets is similar:</p>
+<p>PyTorch:</p>
+<ul>
+<li><code>mydataset.__getindex__(idx)</code></li>
+<li><code>mydataset.__len__()</code></li>
+</ul>
+<p>DataLoaders.jl:</p>
+<ul>
+<li><code>LearnBase.getobs(mydataset, idx)</code></li>
+<li><code>LearnBase.nobs(mydataset)</code></li>
+</ul>
+<p>See <a href="datacontainers.html">Data containers</a> for specifics.</p>
+<h3 id="sampling-and-shuffling"><a href="#sampling-and-shuffling" class="anchor"></a>Sampling and shuffling</h3>
+<p>Unlike PyTorch’s DataLoader, <code>DataLoaders.jl</code> delegates <a href="shuffling.html">shuffling, subsetting and sampling</a> to existing packages. Consequently there are no <code>shuffle</code>, <code>sampler</code> and <code>batch_sampler</code> arguments.</p>
+<h3 id="automatic-batching"><a href="#automatic-batching" class="anchor"></a>Automatic batching</h3>
+<p>Automatic batching is controlled with the <code>collate</code> keyword argument (default <code>true</code>). A custom <code>collate_fn</code> is not supported.</p>
+<h3 id="partial-batches"><a href="#partial-batches" class="anchor"></a>Partial batches</h3>
+<p>PyTorch’s <code>drop_last</code> becomes <code>partial</code> for compatibility with <a href="https://github.com/FluxML/Flux.jl"><code>Flux</code></a>s <code>DataLoader</code>.</p>
+</article>
+        <div id="page-navigation">
+            <a id="previous-page" title="Previous" href="shuffling.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="next-page" title="Next" href="status.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
+        </div>
+    </main>
+    <nav id="toc"><h3 id="guide"><a href="#guide" class="anchor"></a>Guide</h3>
+<ul>
+<li><a href="../README.html">Introduction</a></li>
+<li><a href="motivation.html">Motivation</a></li>
+<li><a href="simpleexample.html">A simple example</a></li>
+<li><a href="datacontainers.html">Data containers</a></li>
+<li><a href="shuffling.html">Shuffling, subsetting, sampling</a></li>
+<li><a href="quickstartpytorch.html">QuickStart for PyTorch users</a></li>
+<li><a href="status.html">Project status</a></li>
+</ul>
+<h3 id="docstrings"><a href="#docstrings" class="anchor"></a>Docstrings</h3>
+<ul>
+<li><a href="../docstrings.html">Reference</a></li>
+</ul>
+<h3 id="source-files"><a href="#source-files" class="anchor"></a>Source files</h3>
+<ul>
+<li><a href="../src/DataLoaders.html">DataLoaders.jl</a></li>
+</ul>
+</nav>
+    <footer>
+        Build with <a target="_blank" href="https://github.com/MichaelHatherly/Publish.jl">Publish.jl</a> and the <a target="_blank" href="https://julialang.org">Julia Language.</a>
+    </footer>
+    <script>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>
