@@ -25,60 +25,21 @@
         <input id="search-input" placeholder="Search">
         <select id="version-selector"></select>
     </div>
-    <main id="page"><article><h1 id="todo-before-v010"><a href="#todo-before-v010" class="anchor"></a>TODO before v0.1.0</h1>
+    <main id="page"><article><h1 id="todos"><a href="#todos" class="anchor"></a>TODOs</h1>
+<h2 id="features"><a href="#features" class="anchor"></a>Features</h2>
 <ul>
-<li>unify interface</li>
+<li>make compatible with <code>ObsDim</code>s</li>
 </ul>
-<pre><code class="language-julia"># Default options
-DataLoader(
-    data, batchsize = 1;
-    numworkers = Threads.nthreads() - 1,
-    partial = false,
-    collate = true,
-    buffered = collate,
-) = AsyncIterBuffered(batchviewcollated(data, batchsize), numworkers)
-
-# Training example
-DataLoader(data, 16, partial = true)
-  -&gt; BatchViewCollated
-
-# Validation example
-DataLoader(data, 16, shuffle = false, partial = false)
-
-# Visualization example
-DataLoader(data, nothing, shuffle = true, collate = false)
-</code></pre>
+<h2 id="documentation"><a href="#documentation" class="anchor"></a>Documentation</h2>
 <ul>
-<li>implement unbuffered version</li>
+<li>document data iterators better</li>
 <li>document</li>
-<li>format structs repr</li>
-<li>make sure datasets wrapped in <code>shuffleobs</code> and <code>datasubset</code>
-support <code>getobs!</code></li>
-<li>provide
-<ul>
-<li><code>batchview(partial = false)</code></li>
-<li><code>batchviewcollated(partial = false)</code></li>
-<li><code>AsyncIter(data, numworkers)</code></li>
-<li><code>AsyncIterBuffered(data, numworkers)</code></li>
-</ul>
-</li>
-</ul>
-<h2 id="requirements"><a href="#requirements" class="anchor"></a>Requirements</h2>
-<ul>
-<li><code>droplast</code> works with <code>BatchViewBuffered</code></li>
-<li>works when no threads available; print error message</li>
-<li><code>shuffle</code> and <code>datasubset</code> work inplace</li>
-<li>errors on workers or main thread lead to interrupt of both</li>
-<li>compatible with <code>ObsDim</code>s</li>
-</ul>
-<h2 id="todo"><a href="#todo" class="anchor"></a>ToDo</h2>
-<ul>
-<li>fix collation for data containers that don’t support <code>getobs!</code></li>
+<li>port <a href="https://pytorch.org/tutorials/beginner/data_loading_tutorial.html">PyTorch custom dataset tutorial</a></li>
 </ul>
 </article>
         <div id="page-navigation">
             <a id="previous-page" title="Previous" href="quickstartpytorch.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
-            <a id="next-page" title="Next" href="..&#x2F;src&#x2F;DataLoaders.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="next-page" title="Next" href="overview.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
         </div>
     </main>
     <nav id="toc"><h3 id="guide"><a href="#guide" class="anchor"></a>Guide</h3>
@@ -91,13 +52,10 @@ support <code>getobs!</code></li>
 <li><a href="quickstartpytorch.html">QuickStart for PyTorch users</a></li>
 <li><a href="status.html">Project status</a></li>
 </ul>
-<h3 id="docstrings"><a href="#docstrings" class="anchor"></a>Docstrings</h3>
+<h3 id="library"><a href="#library" class="anchor"></a>Library</h3>
 <ul>
-<li><a href="../docstrings.html">Reference</a></li>
-</ul>
-<h3 id="source-files"><a href="#source-files" class="anchor"></a>Source files</h3>
-<ul>
-<li><a href="../src/DataLoaders.html">DataLoaders.jl</a></li>
+<li><a href="overview.html">Overview</a></li>
+<li><a href="../docstrings.html">Docstrings</a></li>
 </ul>
 </nav>
     <footer>

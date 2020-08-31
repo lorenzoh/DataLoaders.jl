@@ -25,36 +25,14 @@
         <input id="search-input" placeholder="Search">
         <select id="version-selector"></select>
     </div>
-    <main id="page"><article><h1 id="quickstart-for-pytorch-users"><a href="#quickstart-for-pytorch-users" class="anchor"></a>Quickstart for PyTorch users</h1>
-<p>Like Pytorch’s <a href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader">DataLoader</a>,
-this package provides an iterator over your dataset that loads data in parallel in the
-background.</p>
-<p>The basic interface is the same: <code>DataLoader(data, batchsize)</code>.</p>
-<p>See <a href="../docstrings/DataLoaders.DataLoader.html"><code>DataLoader</code></a> for all supported options.</p>
-<h2 id="pytorch-vs-dataloadersjl"><a href="#pytorch-vs-dataloadersjl" class="anchor"></a>PyTorch vs. <code>DataLoaders.jl</code></h2>
-<h3 id="dataset-interface-"><a href="#dataset-interface-" class="anchor"></a>Dataset interface</h3>
-<p>The dataset interface for map-style datasets is similar:</p>
-<p>PyTorch:</p>
-<ul>
-<li><code>mydataset.__getindex__(idx)</code></li>
-<li><code>mydataset.__len__()</code></li>
-</ul>
-<p>DataLoaders.jl:</p>
-<ul>
-<li><code>LearnBase.getobs(mydataset, idx)</code></li>
-<li><code>LearnBase.nobs(mydataset)</code></li>
-</ul>
-<p>See <a href="datacontainers.html">Data containers</a> for specifics.</p>
-<h3 id="sampling-and-shuffling"><a href="#sampling-and-shuffling" class="anchor"></a>Sampling and shuffling</h3>
-<p>Unlike PyTorch’s DataLoader, <code>DataLoaders.jl</code> delegates <a href="shuffling.html">shuffling, subsetting and sampling</a> to existing packages. Consequently there are no <code>shuffle</code>, <code>sampler</code> and <code>batch_sampler</code> arguments.</p>
-<h3 id="automatic-batching"><a href="#automatic-batching" class="anchor"></a>Automatic batching</h3>
-<p>Automatic batching is controlled with the <code>collate</code> keyword argument (default <code>true</code>). A custom <code>collate_fn</code> is not supported.</p>
-<h3 id="partial-batches"><a href="#partial-batches" class="anchor"></a>Partial batches</h3>
-<p>PyTorch’s <code>drop_last</code> becomes <code>partial</code> for compatibility with <a href="https://github.com/FluxML/Flux.jl"><code>Flux</code></a>s <code>DataLoader</code>.</p>
+    <main id="page"><article><h1 id="overview"><a href="#overview" class="anchor"></a>Overview</h1>
+<p>The central function in <code>DataLoaders</code> is, of course, <a href="../docstrings/DataLoaders.DataLoader.html"><code>DataLoader</code></a>.</p>
+<p>It provides a wrapper around a parallel data iterator, <a href="../docstrings/DataLoaders.eachobsparallel.html"><code>eachobsparallel</code></a></p>
+<p>Finally, <a href="../docstrings/DataLoaders.batchviewcollated.html"><code>batchviewcollated</code></a> provides a lazy view of collated batches with support for inplace loading.</p>
 </article>
         <div id="page-navigation">
-            <a id="previous-page" title="Previous" href="shuffling.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
-            <a id="next-page" title="Next" href="status.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="previous-page" title="Previous" href="status.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="next-page" title="Next" href="..&#x2F;docstrings.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
         </div>
     </main>
     <nav id="toc"><h3 id="guide"><a href="#guide" class="anchor"></a>Guide</h3>

@@ -25,11 +25,25 @@
         <input id="search-input" placeholder="Search">
         <select id="version-selector"></select>
     </div>
-    <main id="page"><article><div class='docs' id='GetObsAsync'>
-<p><em><code>public</code></em> <strong><code>GetObsAsync</code></strong> — <code>parametric type</code></p>
+    <main id="page"><article><div class='docs' id='RingBuffer'>
+<p><em><code>private</code></em> <strong><code>RingBuffer</code></strong> — <code>parametric type</code></p>
 <div class='doc' id='1'>
-<pre><code>GetObsAsync(data, useprimary = false)
+<pre><code>RingBuffer(size, buf)
 </code></pre>
+<p>A <code>Channel</code>-like data structure that rotates through
+<code>size</code> buffers. <code>put!</code>s work by mutating one of the buffers:</p>
+<pre><code>put!(ringbuffer) do buf
+    rand!(buf)
+end
+</code></pre>
+<p>The result can then be <code>take!</code>n:</p>
+<pre><code>res = take!(ringbuffer)
+</code></pre>
+<div class="admonition warning"><p class="admonition-title">Invalidation</p>
+<p>Only one result is valid at a time! On the next <code>take!</code>, the previous
+result will be reused as a buffer and be mutated by a <code>put!</code></p>
+</div>
+<p>See also <a href="Base.put!.html"><code>put!</code></a></p>
 </div>
 </div>
 </article>
@@ -48,13 +62,10 @@
 <li><a href="../docs/quickstartpytorch.html">QuickStart for PyTorch users</a></li>
 <li><a href="../docs/status.html">Project status</a></li>
 </ul>
-<h3 id="docstrings"><a href="#docstrings" class="anchor"></a>Docstrings</h3>
+<h3 id="library"><a href="#library" class="anchor"></a>Library</h3>
 <ul>
-<li><a href="../docstrings.html">Reference</a></li>
-</ul>
-<h3 id="source-files"><a href="#source-files" class="anchor"></a>Source files</h3>
-<ul>
-<li><a href="../src/DataLoaders.html">DataLoaders.jl</a></li>
+<li><a href="../docs/overview.html">Overview</a></li>
+<li><a href="../docstrings.html">Docstrings</a></li>
 </ul>
 </nav>
     <footer>

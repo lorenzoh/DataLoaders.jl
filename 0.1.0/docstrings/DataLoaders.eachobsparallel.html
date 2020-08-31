@@ -25,45 +25,40 @@
         <input id="search-input" placeholder="Search">
         <select id="version-selector"></select>
     </div>
-    <main id="page"><article><h2 id="a-simple-example"><a href="#a-simple-example" class="anchor"></a>A simple example</h2>
-<p>Let’s have another look at the example from the <a href="README.html">introduction</a>.</p>
-<p>First we create some dummy data of observations and targets:</p>
-<pre><code class="language-julia">x = rand(128, 4096)  # 4096 samples of size (128,)
-y = rand(1, 4096)    # 4096 samples of size (1,)
+    <main id="page"><article><div class='docs' id='eachobsparallel'>
+<p><em><code>public</code></em> <strong><code>eachobsparallel</code></strong> — <code>function</code></p>
+<div class='doc' id='1'>
+<pre><code>eachobsparallel(data; useprimary = false, buffered = true)
 </code></pre>
-<p>We then create a <code>DataLoader</code> with batch size 16:</p>
-<pre><code class="language-julia">dataloader = BatchLoader((x, y), 16)
-</code></pre>
-<p>Et voilá, a training loop:</p>
-<pre><code class="language-julia">for (xs, ys) in dataloader  # size(xs) == (128, 16)
-    # optimization step
-end
-</code></pre>
-<p><code>DataLoaders</code> supports many different data containers by building off the interface of
-<a href="https://mldatautilsjl.readthedocs.io/en/latest/data/pattern.html"><code>MLDataPattern.jl</code></a>.
-Above, we pass in a tuple of datasets, hence the batch is also tuple.</p>
-<hr />
-<p>Let’s <a href="/docs/datacontainers.html">next</a> look at a realistic use case
-and show how to support custom data containers.</p>
+<p>Parallel data iterator for data container <code>data</code>. Loads data on all
+available threads (except the first if <code>useprimary</code> is <code>false</code>).</p>
+<p>If <code>buffered</code> is <code>true</code>, uses <code>getobs!</code> to load samples inplace.</p>
+<p>See also <code>MLDataPattern.eachobs</code></p>
+<div class="admonition warning"><p class="admonition-title">Order</p>
+<p><code>eachobsparallel</code> does not guarantee that the samples
+are returned in the correct order.</p>
+</div>
+</div>
+</div>
 </article>
         <div id="page-navigation">
-            <a id="previous-page" title="Previous" href="motivation.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
-            <a id="next-page" title="Next" href="datacontainers.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="previous-page" title="Previous" href="DataLoaders.batchindices.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="next-page" title="Next" href="DataLoaders.obsslices.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
         </div>
     </main>
     <nav id="toc"><h3 id="guide"><a href="#guide" class="anchor"></a>Guide</h3>
 <ul>
 <li><a href="../README.html">Introduction</a></li>
-<li><a href="motivation.html">Motivation</a></li>
-<li><a href="simpleexample.html">A simple example</a></li>
-<li><a href="datacontainers.html">Data containers</a></li>
-<li><a href="shuffling.html">Shuffling, subsetting, sampling</a></li>
-<li><a href="quickstartpytorch.html">QuickStart for PyTorch users</a></li>
-<li><a href="status.html">Project status</a></li>
+<li><a href="../docs/motivation.html">Motivation</a></li>
+<li><a href="../docs/simpleexample.html">A simple example</a></li>
+<li><a href="../docs/datacontainers.html">Data containers</a></li>
+<li><a href="../docs/shuffling.html">Shuffling, subsetting, sampling</a></li>
+<li><a href="../docs/quickstartpytorch.html">QuickStart for PyTorch users</a></li>
+<li><a href="../docs/status.html">Project status</a></li>
 </ul>
 <h3 id="library"><a href="#library" class="anchor"></a>Library</h3>
 <ul>
-<li><a href="overview.html">Overview</a></li>
+<li><a href="../docs/overview.html">Overview</a></li>
 <li><a href="../docstrings.html">Docstrings</a></li>
 </ul>
 </nav>

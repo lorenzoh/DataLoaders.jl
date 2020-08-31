@@ -31,9 +31,10 @@
 <pre><code>DataLoader(
     data, batchsize = 1;
     partial = true,
-    parallel = Threads.nthreads() &gt; 1,  # used if possible
     collate = true,
     buffered = collate,
+    parallel = Threads.nthreads() &gt; 1,
+    useprimary = false,
 )
 </code></pre>
 <p>Utility for creating iterators of container <code>data</code> with a familiar interface
@@ -42,26 +43,30 @@ for PyTorch users.</p>
 <ul>
 <li><code>data</code>: A data container supporting the <code>LearnBase</code> data access pattern</li>
 <li><code>batchsize = 1</code>: Number of samples to batch together. Disable batching
-by setting to <code>nothing</code></li>
+by setting to <code>nothing</code>.</li>
 </ul>
 <h2 id="keyword-arguments"><a href="#keyword-arguments" class="anchor"></a>Keyword arguments</h2>
 <ul>
 <li><code>partial::Bool = true</code>: Whether to include the last batch when <code>nobs(dataset)</code> is
 not divisible by <code>batchsize</code>. <code>true</code> ensures all batches have the same size, but
-some samples might be dropped</li>
-<li><code>parallel::Bool = Threads.nthreads() &gt; 1)</code>: Whether to load data
-in parallel, keeping the primary thread is. Default is <code>true</code> if
-more than one thread is available.</li>
+some samples might be dropped.</li>
 <li><code>buffered::Bool = collate</code>: If <code>buffered</code> is <code>true</code>, loads data inplace
 using <code>getobs!</code>. See <a href="../docs/datacontainers.html">Data containers</a> for details
 on buffered loading.</li>
+<li><code>parallel::Bool = Threads.nthreads() &gt; 1)</code>: Whether to load data
+in parallel, keeping the primary thread is. Default is <code>true</code> if
+more than one thread is available.</li>
+<li><code>useprimary::Bool = false</code>: If <code>false</code>, keep the main thread free when loading
+data in parallel. Is ignored if <code>parallel</code> is <code>false</code>.</li>
 </ul>
+<h2 id="examples"><a href="#examples" class="anchor"></a>Examples</h2>
+<p><code>DataLoader(data, 16) === </code><a href="DataLoaders.BufferGetObsParallel.html"><code>BufferGetObsParallel</code></a><code>(</code><a href="DataLoaders.batchviewcollated.html"><code>batchviewcollated</code></a><code>(data, 16))</code></p>
 </div>
 </div>
 </article>
         <div id="page-navigation">
-            <a id="previous-page" title="Previous" href="DataLoaders.BufferGetObsAsync.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
-            <a id="next-page" title="Next" href="DataLoaders.GetObsAsync.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="previous-page" title="Previous" href="DataLoaders.BufferGetObsParallel.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="next-page" title="Next" href="DataLoaders.RingBuffer.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
         </div>
     </main>
     <nav id="toc"><h3 id="guide"><a href="#guide" class="anchor"></a>Guide</h3>
@@ -74,13 +79,10 @@ on buffered loading.</li>
 <li><a href="../docs/quickstartpytorch.html">QuickStart for PyTorch users</a></li>
 <li><a href="../docs/status.html">Project status</a></li>
 </ul>
-<h3 id="docstrings"><a href="#docstrings" class="anchor"></a>Docstrings</h3>
+<h3 id="library"><a href="#library" class="anchor"></a>Library</h3>
 <ul>
-<li><a href="../docstrings.html">Reference</a></li>
-</ul>
-<h3 id="source-files"><a href="#source-files" class="anchor"></a>Source files</h3>
-<ul>
-<li><a href="../src/DataLoaders.html">DataLoaders.jl</a></li>
+<li><a href="../docs/overview.html">Overview</a></li>
+<li><a href="../docstrings.html">Docstrings</a></li>
 </ul>
 </nav>
     <footer>

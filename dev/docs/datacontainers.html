@@ -51,14 +51,14 @@ end
 <p>Since we’re only storing the file paths and not the actual images, <code>ImageDataset</code>
 barely takes up memory.</p>
 <p>Implementing the data container interface is straightforward:</p>
-<pre><code>import LearnBase: nobs, getobs
+<pre><code class="language-julia">import LearnBase: nobs, getobs
 using Images: load
 
 nobs(ds::ImageDataset) = length(ds.files)
 getobs(ds::ImageDataset, idx::Int) = load(ds.files[idx])
 </code></pre>
 <p>And now we can use it with <code>DataLoaders</code>:</p>
-<pre><code class="language-julia">data = ImageDataset(readdir(&quot;./imagenet_images&quot;))
+<pre><code class="language-julia">data = ImageDataset(readdir(&quot;./IMAGENET_IMAGES&quot;))
 
 dataloader = DataLoader(data, 32; collate = false)
 
@@ -85,13 +85,10 @@ threads. Check the number of available threads with <code>Threads.nthreads()</co
 <li><a href="quickstartpytorch.html">QuickStart for PyTorch users</a></li>
 <li><a href="status.html">Project status</a></li>
 </ul>
-<h3 id="docstrings"><a href="#docstrings" class="anchor"></a>Docstrings</h3>
+<h3 id="library"><a href="#library" class="anchor"></a>Library</h3>
 <ul>
-<li><a href="../docstrings.html">Reference</a></li>
-</ul>
-<h3 id="source-files"><a href="#source-files" class="anchor"></a>Source files</h3>
-<ul>
-<li><a href="../src/DataLoaders.html">DataLoaders.jl</a></li>
+<li><a href="overview.html">Overview</a></li>
+<li><a href="../docstrings.html">Docstrings</a></li>
 </ul>
 </nav>
     <footer>
