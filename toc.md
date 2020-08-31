@@ -8,10 +8,7 @@
 - [QuickStart for PyTorch users](docs/quickstartpytorch.md)
 - [Project status](docs/status.md)
 
-### Docstrings
+### Library
 
-- [Reference](docstrings.md)
-
-### Source files
-
-- [DataLoaders.jl](src/DataLoaders.jl)
+- [Overview](docs/overview.md)
+- [Docstrings](docstrings.md)

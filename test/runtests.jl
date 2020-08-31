@@ -19,7 +19,6 @@ LearnBase.getobs(ds::MockDataset, idx::Int) = (randn(ds.sz...))
 LearnBase.getobs(ds::MockDataset, idxs) = [getobs(ds, idx) for idx in idxs]
 LearnBase.getobs!(buf, ds::MockDataset, idx::Int) =
     ds.inplace ? fill!(buf, 0.3) : getobs(ds, idx)
-#LearnBase.getobs!(bufs, ds::MockDataset, idxs) = map(idx -> LearnBase.getobs!(buf, ds, idx), idxs)
 LearnBase.nobs(ds::MockDataset) = ds.n
 
 
@@ -69,7 +68,7 @@ end
     end
 
     @testset ExtendedTestSet "droplast" begin
-        bv = BatchViewCollated(data, 3, droplast = false)
+        bv = batchviewcollated(data, 3, partial = true)
         @test nobs(bv) == 34
 
     end
@@ -114,41 +113,43 @@ end
 end
 
 @testset ExtendedTestSet "WorkerPool" begin
-    xs = falses(10)
+    if Threads.nthreads() == 1
+        @test_broken false
+    else
+        xs = falses(10)
 
-    @test !any(xs)
-    pool = WorkerPool(collect(zip(1:10))) do i
-        xs[i] = true
+        @test !any(xs)
+        pool = WorkerPool(collect(zip(1:10))) do i
+            xs[i] = true
+        end
+        DataLoaders.run(pool)
+        @test all(xs)
     end
-    DataLoaders.run(pool)
-    @test all(xs)
 
 
 end
 
 
-@testset ExtendedTestSet "GetObsAsync" begin
-    make() = DataLoaders.GetObsAsync(rand(10, 64))
+@testset ExtendedTestSet "eachobsparallel unbuffered" begin
+    make() = eachobsparallel(rand(10, 64), buffered = false)
 
     @testset ExtendedTestSet "iterate" begin
         dl = make()
-        x, (ringbuffer, workerpool, idx) = iterate(dl)
+        x, (results, workerpool, idx) = iterate(dl)
         @test idx == 1
-        @test x == getobs(dl.data, 1)
         @test_nowarn for obs in dl
         end
     end
 end
 
 
-@testset ExtendedTestSet "BufferGetObsAsync" begin
-    make() = DataLoaders.BufferGetObsAsync(rand(10, 64))
+@testset ExtendedTestSet "eachobsparallel buffered" begin
+    make() = eachobsparallel(rand(10, 64), buffered = true)
 
     @testset ExtendedTestSet "iterate" begin
         dl = make()
         x, (ringbuffer, workerpool, idx) = iterate(dl)
         @test idx == 1
-        @test x == getobs(dl.data, 1)
         @test_nowarn for obs in dl
         end
     end
@@ -169,7 +170,37 @@ end
         @test nobs(bv) == 4
         buf = getobs(bv, 4)
         buf = getobs!(buf, bv, 4)
-
     end
 
+end
+
+
+@testset ExtendedTestSet "DataLoader" begin
+    data = MockDataset(256, (10, 5), true)
+    bs = 8
+
+    @testset ExtendedTestSet "buffer, collate, parallel" begin
+        dl = DataLoader(data, bs)
+        @test_nowarn for batch in dl end
+    end
+
+    @testset ExtendedTestSet "buffer, collate, parallel, samples" begin
+        dl = DataLoader(data, nothing)
+        @test_nowarn for batch in dl end
+    end
+
+    @testset ExtendedTestSet "collate, parallel" begin
+        dl = DataLoader(data, bs, buffered = false)
+        @test_nowarn for batch in dl end
+    end
+
+    @testset ExtendedTestSet "collate" begin
+        dl = DataLoader(data, bs, buffered = false, parallel = false)
+        @test_nowarn for batch in dl end
+    end
+
+    @testset ExtendedTestSet "buffer, collate" begin
+        dl = DataLoader(data, bs, buffered = true, parallel = false)
+        @test_nowarn for batch in dl end
+    end
 end

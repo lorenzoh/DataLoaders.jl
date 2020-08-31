@@ -1,4 +1,29 @@
 
+"""
+    RingBuffer(size, buf)
+
+A `Channel`-like data structure that rotates through
+`size` buffers. `put!`s work by mutating one of the buffers:
+
+```
+put!(ringbuffer) do buf
+    rand!(buf)
+end
+```
+
+The result can then be `take!`n:
+
+```
+res = take!(ringbuffer)
+```
+
+!!! warning "Invalidation"
+
+    Only one result is valid at a time! On the next `take!`, the previous
+    result will be reused as a buffer and be mutated by a `put!`
+
+See also [`put!`](#)
+"""
 mutable struct RingBuffer{T}
     buffers::Channel{T}
     results::Channel{T}

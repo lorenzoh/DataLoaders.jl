@@ -1,47 +1,11 @@
-# TODO before v0.1.0
+# TODOs
 
-- unify interface
+## Features
 
-```julia
-# Default options
-DataLoader(
-    data, batchsize = 1;
-    numworkers = Threads.nthreads() - 1,
-    partial = false,
-    collate = true,
-    buffered = collate,
-) = AsyncIterBuffered(batchviewcollated(data, batchsize), numworkers)
+- make compatible with `ObsDim`s
 
-# Training example
-DataLoader(data, 16, partial = true)
-  -> BatchViewCollated
+## Documentation
 
-# Validation example
-DataLoader(data, 16, shuffle = false, partial = false)
-
-# Visualization example
-DataLoader(data, nothing, shuffle = true, collate = false)
-```
-
-- implement unbuffered version
+- document data iterators better
 - document
-- format structs repr
-- make sure datasets wrapped in `shuffleobs` and `datasubset`
-  support `getobs!`
-- provide
-  - `batchview(partial = false)`
-  - `batchviewcollated(partial = false)`
-  - `AsyncIter(data, numworkers)`
-  - `AsyncIterBuffered(data, numworkers)`
-
-## Requirements
-
-- `droplast` works with `BatchViewBuffered`
-- works when no threads available; print error message
-- `shuffle` and `datasubset` work inplace
-- errors on workers or main thread lead to interrupt of both
-- compatible with `ObsDim`s
-
-## ToDo
-
-- fix collation for data containers that don't support `getobs!`
+- port [PyTorch custom dataset tutorial](https://pytorch.org/tutorials/beginner/data_loading_tutorial.html)

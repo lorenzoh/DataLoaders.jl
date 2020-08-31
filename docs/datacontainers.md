@@ -35,7 +35,7 @@ barely takes up memory.
 
 Implementing the data container interface is straightforward:
 
-```
+```julia
 import LearnBase: nobs, getobs
 using Images: load
 
@@ -46,7 +46,7 @@ getobs(ds::ImageDataset, idx::Int) = load(ds.files[idx])
 And now we can use it with `DataLoaders`:
 
 ```julia
-data = ImageDataset(readdir("./imagenet_images"))
+data = ImageDataset(readdir("./IMAGENET_IMAGES"))
 
 dataloader = DataLoader(data, 32; collate = false)
 
@@ -56,7 +56,6 @@ end
 ```
 
 !!! warning "Threads"
-    
+
     To use `DataLoaders`' multi-threading, you need to start Julia with multiple
     threads. Check the number of available threads with `Threads.nthreads()`.
-

@@ -17,40 +17,48 @@ include("./loaders.jl")
     DataLoader(
         data, batchsize = 1;
         partial = true,
-        parallel = Threads.nthreads() > 1,  # used if possible
         collate = true,
         buffered = collate,
+        parallel = Threads.nthreads() > 1,
+        useprimary = false,
     )
 
 Utility for creating iterators of container `data` with a familiar interface
 for PyTorch users.
 
-
 ## Arguments
 
 - `data`: A data container supporting the `LearnBase` data access pattern
 - `batchsize = 1`: Number of samples to batch together. Disable batching
-  by setting to `nothing`
+  by setting to `nothing`.
 
 ## Keyword arguments
 
 - `partial::Bool = true`: Whether to include the last batch when `nobs(dataset)` is
   not divisible by `batchsize`. `true` ensures all batches have the same size, but
-  some samples might be dropped
-- `parallel::Bool = Threads.nthreads() > 1)`: Whether to load data
-  in parallel, keeping the primary thread is. Default is `true` if
-  more than one thread is available.
+  some samples might be dropped.
 - `buffered::Bool = collate`: If `buffered` is `true`, loads data inplace
   using `getobs!`. See [Data containers](../docs/datacontainers.md) for details
   on buffered loading.
+- `parallel::Bool = Threads.nthreads() > 1)`: Whether to load data
+  in parallel, keeping the primary thread is. Default is `true` if
+  more than one thread is available.
+- `useprimary::Bool = false`: If `false`, keep the main thread free when loading
+  data in parallel. Is ignored if `parallel` is `false`.
+
+## Examples
+
+`DataLoader(data, 16) === `[`BufferGetObsAsync`](#)`(`[`batchviewcollated`](#)`(data, 16))`
+
 """
 function DataLoader(
         data,
         batchsize = 1;
-        parallel = Threads.nthreads() > 1,
         collate = !isnothing(batchsize),
         buffered = collate,
         partial = true,
+        parallel = Threads.nthreads() > 1,
+        useprimary = false,
     )
 
     batchwrapper = if isnothing(batchsize)
@@ -80,14 +88,7 @@ function DataLoader(
     return loadwrapper(batchwrapper(data))
 end
 
-function BatchLoader(
-        dataset, batchsize;
-        buffered = true, collate = true, useprimary = false, droplast = true)
-    data = BatchViewCollated(dataset, batchsize, droplast = droplast)
-    return DataLoader(data; buffered = buffered, useprimary = useprimary)
-end
 
-
-export DataLoader, GetObsAsync, BufferGetObsAsync, batchviewcollated
+export DataLoader, eachobsparallel, batchviewcollated
 
 end  # module

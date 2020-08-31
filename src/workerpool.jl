@@ -43,7 +43,7 @@ function run(pool::WorkerPool)
         end
     end
 
-    @qbthreads for args in pool.args
+    function inloop(args)
         #for args in pool.args  # uncomment for debugging
         # task error handling
         pool.state !== Failed || error("Shutting down worker $(Threads.threadid())")
@@ -56,6 +56,16 @@ function run(pool::WorkerPool)
                 e
             pool.state = Failed
             rethrow()
+        end
+    end
+
+    if pool.useprimary
+        @qthreads for args in pool.args
+            inloop(args)
+        end
+    else
+        @qbthreads for args in pool.args
+            inloop(args)
         end
     end
 
