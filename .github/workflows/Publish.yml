@@ -1,3 +1,4 @@
+# Adapted from https://github.com/MichaelHatherly/Publish.jl
 name: Publish
 
 on:
@@ -23,7 +24,7 @@ jobs:
       - name: Build and deploy
         run: |
           cd gh-pages
-          julia --color=yes --project=. -e 'using Pkg; Pkg.add("Publish"); using Publish, DataLoaders; deploy(DataLoaders; root="/DataLoaders.jl", label="dev")'
+          julia --color=yes --project=.. -e 'using Pkg; Pkg.add("Publish"); using Publish, DataLoaders; deploy(DataLoaders; root="/DataLoaders.jl", label="dev")'
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
