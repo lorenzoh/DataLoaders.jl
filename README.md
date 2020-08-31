@@ -36,5 +36,6 @@ Available methods are documented [here](docstrings.md).
 
 ## Acknowledgements
 
+- [`MLDataPattern.jl`](https://github.com/JuliaML/MLDataPattern.jl)
 - [`ThreadPools.jl`](https://github.com/tro3/ThreadPools.jl)
 - [PyTorch `DataLoader`](https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader)
