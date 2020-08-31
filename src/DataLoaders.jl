@@ -48,7 +48,7 @@ for PyTorch users.
 
 ## Examples
 
-`DataLoader(data, 16) === `[`BufferGetObsAsync`](#)`(`[`batchviewcollated`](#)`(data, 16))`
+`DataLoader(data, 16) === `[`BufferGetObsParallel`](#)`(`[`batchviewcollated`](#)`(data, 16))`
 
 """
 function DataLoader(
@@ -75,9 +75,9 @@ function DataLoader(
         collate ? batchviewcollated : batchview)
 
     loadwrapper = if buffered && parallel
-        BufferGetObsAsync
+        BufferGetObsParallel
     elseif !buffered && parallel
-        GetObsAsync
+        GetObsParallel
     elseif buffered && !parallel
         eachobs
     else
