@@ -1,5 +1,6 @@
 # DataLoaders
 
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://lorenzoh.github.io/DataLoaders.jl/dev)
 
 A threaded data iterator for machine learning on out-of-memory datasets. Inspired by PyTorch's DataLoader.
 
