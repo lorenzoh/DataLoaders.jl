@@ -18,7 +18,9 @@ jobs:
         with:
           version: '1.5'
       - name: Install dependencies
-        run: julia --color=yes --project=. -e 'using Pkg; Pkg.instantiate()'
+        run: |
+          julia --color=yes --project=. -e 'using Pkg; Pkg.instantiate()'
+          julia --color=yes --project=./docs -e 'using Pkg; Pkg.instantiate()'
       - name: Build and deploy
         run: |
           cd gh-pages
