@@ -54,7 +54,7 @@ function run(pool::WorkerPool)
         catch e
             println(stacktrace())
             @error "Exception while executing task on worker $(Threads.threadid()). Shutting down WorkerPool." e =
-                e stacktrace = stacktrace()
+                e stacktrace = stacktrace() args = args
             pool.state = Failed
             rethrow()
         end
