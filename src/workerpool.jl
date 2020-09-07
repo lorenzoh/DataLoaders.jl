@@ -52,8 +52,9 @@ function run(pool::WorkerPool)
             pool.workerfn(args...)
             Threads.atomic_add!(pool.ntasks, -1)
         catch e
+            println(stacktrace())
             @error "Exception while executing task on worker $(Threads.threadid()). Shutting down WorkerPool." e =
-                e
+                e stacktrace = stacktrace()
             pool.state = Failed
             rethrow()
         end

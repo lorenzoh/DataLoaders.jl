@@ -27,7 +27,7 @@ function BatchViewCollated(data, size; partial = true, batchdim = BatchDimLast()
     return BatchViewCollated(data, size, count, partial, batchdim)
 end
 
-Base.length(A::BatchViewCollated) = A.count
+Base.length(bv::BatchViewCollated) = bv.count
 LearnBase.nobs(bv::BatchViewCollated) = length(bv)
 
 function LearnBase.getobs(bv::BatchViewCollated, idx::Int)
@@ -41,16 +41,22 @@ function LearnBase.getobs!(buf, bv::BatchViewCollated, idx::Int)
     for (idx, obs) in zip(indices, obsslices(buf, bv.batchdim))
         obs_ = getobs!(obs, bv.data, idx)
         # if data container does not implement, getobs!, this is needed
-        # TODO: fix for non-array `obs`
         if obs_ !== obs
             copyrec!(obs, obs_)
         end
     end
     # in case it is a partial batch
     # TODO: should this be possible? creates problems with ring buffer
-    if (idx == nobs(bv)) && ((nobs(bv.data) % bv.size) > 0)
+
+    if (idx == nobs(bv)) && bv.partial
+        # This will mess up the buffer in the `RingBuffer`
+        # by not reinserting the correct buffer.
+        # It is okay only because it will that buffer will
+        # not be used since the partial batch is the last
+        # batch.
         return obsslice(buf, 1:(nobs(bv.data) % bv.size), bv.batchdim)
     end
+
 
     return buf
 end
@@ -101,7 +107,7 @@ _batchsize(batch::AbstractArray{T, N}, ::BatchDimLast) where {T, N} = size(batch
 _batchsize(batch::AbstractArray, ::BatchDimFirst) = size(batch, 1)
 
 copyrec!(dst::AbstractArray, src::AbstractArray) = copy!(dst, src)
-copyrec!(dst::Tuple, src::Tuple) = foreach((a, b) -> copyrec!(dst, src), dst, src)
+copyrec!(dst::Tuple, src::Tuple) = foreach((a, b) -> copyrec!(a, b), dst, src)
 copyrec!(dst::Dict, src::Dict) = foreach((a, b) -> copyrec!(dst, src), values(dst), values(src))
 
 """

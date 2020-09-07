@@ -52,7 +52,8 @@ end
 
 function Base.take!(ringbuffer::RingBuffer)
     put!(ringbuffer.buffers, ringbuffer.current)
-    take!(ringbuffer.results)
+    ringbuffer.current = take!(ringbuffer.results)
+    return ringbuffer.current
 end
 
 
@@ -77,7 +78,7 @@ x_ = take!(ringbuffer)
 function Base.put!(f!, ringbuffer::RingBuffer)
     buf = take!(ringbuffer.buffers)
     buf_ = f!(buf)
-    @assert buf_ === buf
+    #@assert buf_ === buf
     put!(ringbuffer.results, buf_)
 end
 
