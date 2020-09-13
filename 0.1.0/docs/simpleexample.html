@@ -17,6 +17,7 @@
     <script src="..&#x2F;julia.min.js"></script>
     <script src="..&#x2F;julia-repl.min.js"></script>
     <script src="..&#x2F;publish.js"></script>
+    <link rel="stylesheet" href="..&#x2F;publish&#x2F;custom.css" />
     
 </head>
 <body>
@@ -32,7 +33,7 @@
 y = rand(1, 4096)    # 4096 samples of size (1,)
 </code></pre>
 <p>We then create a <code>DataLoader</code> with batch size 16:</p>
-<pre><code class="language-julia">dataloader = BatchLoader((x, y), 16)
+<pre><code class="language-julia">dataloader = DataLoader((x, y), 16)
 </code></pre>
 <p>Et voilá, a training loop:</p>
 <pre><code class="language-julia">for (xs, ys) in dataloader  # size(xs) == (128, 16)
