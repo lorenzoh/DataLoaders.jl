@@ -6,7 +6,7 @@ x = rand(128, 4096)  # 4096 samples of size (128,)
 y = rand(1, 4096)    # 4096 samples of size (1,)
 
 # We then create a `DataLoader` with batch size 16:
-dataloader = BatchLoader((x, y), 16)
+dataloader = DataLoader((x, y), 16)
 
 # Et voilá, a training loop:
 for (xs, ys) in dataloader  # size(xs) == (128, 16)
