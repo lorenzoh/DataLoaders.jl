@@ -95,6 +95,10 @@ function obsslice(batch::Tuple, i, batchdim)
     return Tuple(obsslice(batch[j], i, batchdim) for j in 1:length(batch))
 end
 
+function obsslice(batch::NamedTuple, i, batchdim)
+    return (; zip(keys(batch), obsslice(values(batch), i, batchdim))...)
+end
+
 function obsslice(batch::Dict, i, batchdim)
     return Dict(k => obsslice(v, i, batchdim) for (k, v) in batch)
 end
@@ -108,6 +112,7 @@ _batchsize(batch::AbstractArray, ::BatchDimFirst) = size(batch, 1)
 
 copyrec!(dst::AbstractArray, src::AbstractArray) = copy!(dst, src)
 copyrec!(dst::Tuple, src::Tuple) = foreach((a, b) -> copyrec!(a, b), dst, src)
+copyrec!(dst::NamedTuple, src::NamedTuple) = copyrec!(values(dst), values(src))
 copyrec!(dst::Dict, src::Dict) = foreach((a, b) -> copyrec!(dst, src), values(dst), values(src))
 
 """
