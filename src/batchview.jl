@@ -37,7 +37,6 @@ end
 
 function LearnBase.getobs!(buf, bv::BatchViewCollated, idx::Int)
     indices = batchindices(nobs(bv.data), bv.size, idx)
-    # TODO: Fix for partial batches
     for (idx, obs) in zip(indices, obsslices(buf, bv.batchdim))
         obs_ = getobs!(obs, bv.data, idx)
         # if data container does not implement, getobs!, this is needed
@@ -45,10 +44,8 @@ function LearnBase.getobs!(buf, bv::BatchViewCollated, idx::Int)
             copyrec!(obs, obs_)
         end
     end
-    # in case it is a partial batch
-    # TODO: should this be possible? creates problems with ring buffer
 
-    if (idx == nobs(bv)) && bv.partial
+    if bv.partial && (idx == nobs(bv)) && (nobs(bv.data) % bv.size > 0)
         # This will mess up the buffer in the `RingBuffer`
         # by not reinserting the correct buffer.
         # It is okay only because it will that buffer will
