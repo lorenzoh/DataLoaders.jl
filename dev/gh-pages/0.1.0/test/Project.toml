@@ -1,0 +1,6 @@
+[deps]
+LearnBase = "7f8f8fb0-2700-5f03-b4bd-41f8cfc144b6"
+MLDataPattern = "9920b226-0b2a-5f5f-9153-9aa70a013f8b"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+TestSetExtensions = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
