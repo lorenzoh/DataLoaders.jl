@@ -127,6 +127,3 @@ See also `MLDataPattern.eachobs`
 eachobsparallel(data; useprimary = false, buffered = true) =
     buffered ? BufferGetObsParallel(data, useprimary = useprimary) :
     GetObsParallel(data, useprimary = useprimary)
-
-
-eachobssequential(data) = ()
