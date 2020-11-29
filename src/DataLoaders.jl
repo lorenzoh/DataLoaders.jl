@@ -61,7 +61,7 @@ function DataLoader(
     )
 
     Threads.nthreads() > 1 || useprimary || error(
-        "Julia is running with on thread only, either pass `useprimary = true` or "
+        "Julia is running with on thread only, either pass `useprimary = true` or " *
         "start Julia with multiple threads by passing " *
         "the `-t n` option or setting the `JULIA_NUM_THREADS` " *
         "environment variable before starting Julia.")
