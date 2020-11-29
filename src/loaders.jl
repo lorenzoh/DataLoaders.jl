@@ -55,6 +55,8 @@ struct BufferGetObsParallel{TElem,TData}
     useprimary::Bool
 end
 
+Base.show(io::IO, bufparallel::BufferGetObsParallel) = print(io, "eachobsparallel($(bufparallel.data))")
+
 function BufferGetObsParallel(data; useprimary = false)
     nthreads = Threads.nthreads() - Int(!useprimary)
     nthreads > 0 ||
