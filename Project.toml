@@ -1,7 +1,7 @@
 name = "DataLoaders"
 uuid = "2e981812-ef13-4a9c-bfa0-ab13047b12a9"
 authors = ["lorenzoh <lorenz.ohly@gmail.com>"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
