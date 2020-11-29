@@ -9,13 +9,15 @@ struct BatchDimLast <: BatchDim end
 A batch view of container `data` with collated batches of
 size `size`.
 """
-@with_kw struct BatchViewCollated{TData}
+@with_kw_noshow struct BatchViewCollated{TData}
     data::TData
     size::Int
     count::Int
     partial::Bool
     batchdim::BatchDim = BatchDimLast()
 end
+
+Base.show(io::IO, bvcollated::BatchViewCollated) = print(io, "batchviewcollated() with $(bvcollated.count) batches of size $(bvcollated.size)")
 
 const batchviewcollated = BatchViewCollated
 

@@ -13,7 +13,12 @@ for (xs, ys) in dataloader  # size(xs) == (128, 16)
     ## optimization step
 end
 
-
+# !!! note "Threading"
+#
+#     If you want to benefit from parallel data loading, start Julia with multiple threads
+#     by setting the `-t n` flag on startup.
+#
+#
 # `DataLoaders` supports many different data containers by building off the interface of
 # [`MLDataPattern.jl`](https://mldatautilsjl.readthedocs.io/en/latest/data/pattern.html).
 # Above, we pass in a tuple of datasets, hence the batch is also tuple.

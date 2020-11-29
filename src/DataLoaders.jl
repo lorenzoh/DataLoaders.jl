@@ -57,9 +57,14 @@ function DataLoader(
         collate = !isnothing(batchsize),
         buffered = collate,
         partial = true,
-        parallel = Threads.nthreads() > 1,
-        useprimary = false,
+        useprimary = Threads.nthreads() == 1,
     )
+
+    Threads.nthreads() > 1 || useprimary || error(
+        "Please start Julia with multiple threads by passing " *
+        "the `-t n` option or setting the `JULIA_NUM_THREADS` " *
+        "environment variable before starting Julia. If you don't " *
+        "want a parallel data loader, use `Flux.Data.DataLoader` for now.")
 
     batchwrapper = if isnothing(batchsize)
         identity
@@ -70,20 +75,7 @@ function DataLoader(
         data -> batchview(data, size = batchsize)
     end
 
-
-    isnothing(batchsize) ? identity : (
-        collate ? batchviewcollated : batchview)
-
-    loadwrapper = if buffered && parallel
-        BufferGetObsParallel
-    elseif !buffered && parallel
-        GetObsParallel
-    elseif buffered && !parallel
-        eachobs
-    else
-        # TODO: does this make sense?
-        eachobs
-    end
+    loadwrapper = data -> eachobsparallel(data; useprimary = useprimary, buffered = buffered)
 
     return loadwrapper(batchwrapper(data))
 end

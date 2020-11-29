@@ -131,7 +131,7 @@ end
 
 
 @testset ExtendedTestSet "eachobsparallel unbuffered" begin
-    make() = eachobsparallel(rand(10, 64), buffered = false)
+    make() = eachobsparallel(rand(10, 64), buffered = false, useprimary = true)
 
     @testset ExtendedTestSet "iterate" begin
         dl = make()
@@ -144,7 +144,7 @@ end
 
 
 @testset ExtendedTestSet "eachobsparallel buffered" begin
-    make() = eachobsparallel(rand(10, 64), buffered = true)
+    make() = eachobsparallel(rand(10, 64), buffered = true, useprimary = true)
 
     @testset ExtendedTestSet "iterate" begin
         dl = make()
@@ -195,12 +195,12 @@ end
     end
 
     @testset ExtendedTestSet "collate" begin
-        dl = DataLoader(data, bs, buffered = false, parallel = false)
+        dl = DataLoader(data, bs, buffered = false)
         @test_nowarn for batch in dl end
     end
 
     @testset ExtendedTestSet "buffer, collate" begin
-        dl = DataLoader(data, bs, buffered = true, parallel = false)
+        dl = DataLoader(data, bs, buffered = true)
         @test_nowarn for batch in dl end
     end
 end
