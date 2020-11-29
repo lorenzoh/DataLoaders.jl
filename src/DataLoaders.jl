@@ -61,10 +61,10 @@ function DataLoader(
     )
 
     Threads.nthreads() > 1 || useprimary || error(
-        "Please start Julia with multiple threads by passing " *
+        "Julia is running with on thread only, either pass `useprimary = true` or "
+        "start Julia with multiple threads by passing " *
         "the `-t n` option or setting the `JULIA_NUM_THREADS` " *
-        "environment variable before starting Julia. If you don't " *
-        "want a parallel data loader, use `Flux.Data.DataLoader` for now.")
+        "environment variable before starting Julia.")
 
     batchwrapper = if isnothing(batchsize)
         identity
