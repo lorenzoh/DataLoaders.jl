@@ -52,12 +52,7 @@ end
 
 
 function run(pool::WorkerPool{TArgs}) where TArgs
-    workerfn = pool.workerfn
-    tasks = Channel{TArgs}(length(pool.args))
-    foreach(a -> put!(tasks, a), pool.args)
-    usethreads = pool.usethreads
-    useprimary = pool.useprimary
-    state = pool.state
+    @unpack workerfn, usethreads, useprimary, state = pool
     put!(state, Running)
 
     # watchdog that sends exception to main thread if a worker fails
@@ -75,10 +70,12 @@ function run(pool::WorkerPool{TArgs}) where TArgs
     end
     
     if usethreads
-        @sync for id in (useprimary ? 1 : 2):nthreads()
-            Threads.@spawn on_worker(tasks, state, workerfn, usethreads, useprimary)
+        (useprimary ? qforeach : qbforeach)(pool.args) do args
+            inloop(state, workerfn, threadid(), args)
         end
     else
+        tasks = Channel{TArgs}(length(pool.args))
+        foreach(a -> put!(tasks, a), pool.args)
         remote_state = RemoteChannel(() -> state)
         remote_tasks = RemoteChannel(() -> tasks)
         @sync for id in (useprimary ? procs() : workers())
@@ -87,9 +84,21 @@ function run(pool::WorkerPool{TArgs}) where TArgs
     end
 
     # Tasks completed successfully
-    put!(pool.state, Done)
+    put!(state, Done)
 end
 
+function inloop(state, workerfn, id, args)
+    try
+        # execute task
+        workerfn(args...)
+    catch e
+        display(stacktrace())
+        @error "Exception while executing task on worker $id. Shutting down WorkerPool." e =
+            e stacktrace = stacktrace() args = args
+        put!(state, Failed)
+        rethrow()
+    end
+end
 
 function on_worker(tasks, state, workerfn, usethreads, useprimary)
     # task error handling
@@ -98,15 +107,6 @@ function on_worker(tasks, state, workerfn, usethreads, useprimary)
     while isready(tasks)
         fetch(state) !== Failed || error("Shutting down worker $id")
         args = take!(tasks)
-        try
-            # execute task
-            workerfn(args...)
-        catch e
-            display(stacktrace())
-            @error "Exception while executing task on worker $id. Shutting down WorkerPool." e =
-                e stacktrace = stacktrace() args = args
-            put!(state, Failed)
-            # rethrow()
-        end
+        inloop(state, workerfn, id, args)
     end
 end

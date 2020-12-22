@@ -68,7 +68,7 @@ end
 Base.show(io::IO, bufparallel::BufferGetObsParallel) = print(io, "eachobsparallel($(bufparallel.data))")
 
 function BufferGetObsParallel(data; useprimary = false)
-    nthreads = nthreads() - Int(!useprimary)
+    nthreads = Threads.nthreads() - Int(!useprimary)
     nthreads > 0 ||
         error("Cannot load data off main thread with only one thread available. Pass `useprimary = true` or start Julia with > 1 threads.")
 
