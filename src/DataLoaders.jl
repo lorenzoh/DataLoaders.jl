@@ -48,6 +48,7 @@ for PyTorch users.
 - `usethreads::Bool = true`: Whether to use threads or processes
 - `useprimary::Bool = false`: If `false`, keep the main thread free when loading
   data in parallel. Is ignored if `parallel` is `false`.
+- `maxquesize = nothing`: Maximum size of caching queue.
 
 ## Examples
 
@@ -62,6 +63,7 @@ function DataLoader(
         partial = true,
         usethreads = true,
         useprimary = usethreads ? nthreads() == 1 : nprocs() == 1,
+        maxquesize = nothing,
     )
 
     !usethreads || nthreads() > 1 || useprimary || error(
@@ -70,15 +72,11 @@ function DataLoader(
         "the `-t n` option or setting the `JULIA_NUM_THREADS` " *
         "environment variable before starting Julia.")
 
-    usethreads || Distributed.nprocs() > 1 || useprimary || error(
+    usethreads || nprocs() > 1 || useprimary || error(
         "Julia is running with one procs only, either pass `useprimary = true` or " *
         "start Julia with multiple threads by passing " *
         "the `-p n` option " *
         "environment variable before starting Julia.")
-
-    usethreads || !buffered || error(
-        "Buffered loading is not compatible with `usethreads = false`"
-    )
 
     batchwrapper = if isnothing(batchsize)
         identity
@@ -89,7 +87,7 @@ function DataLoader(
         data -> batchview(data, size = batchsize)
     end
 
-    loadwrapper = data -> eachobsparallel(data; usethreads = usethreads, useprimary = useprimary, buffered = buffered)
+    loadwrapper = data -> eachobsparallel(data; usethreads = usethreads, useprimary = useprimary, buffered = buffered, maxquesize = maxquesize)
 
     return loadwrapper(batchwrapper(data))
 end

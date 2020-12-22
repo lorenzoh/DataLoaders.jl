@@ -181,43 +181,46 @@ end
 
 end
 
+for usethreads in (true, false), maxquesize in (nothing, 4, 8)
 
-@testset ExtendedTestSet "DataLoader" begin
+@testset ExtendedTestSet "DataLoader: usethreads=$usethreads, maxquesize=$maxquesize" begin
     data = MockDataset(256, (10, 5), true)
     bs = 8
     
     @testset ExtendedTestSet "buffer, collate, parallel" begin
-        dl = DataLoader(data, bs)
+        dl = DataLoader(data, bs, usethreads = usethreads, maxquesize = maxquesize)
         @test_nowarn for batch in dl end
     end
 
     @testset ExtendedTestSet "buffer, collate, parallel, samples" begin
-        dl = DataLoader(data, nothing)
+        dl = DataLoader(data, nothing, usethreads = usethreads, maxquesize = maxquesize)
         @test_nowarn for batch in dl end
     end
 
     @testset ExtendedTestSet "buffer, collate, parallel, samples, distributed" begin
-        dl = DataLoader(data, nothing, usethreads = false)
+        dl = DataLoader(data, nothing, usethreads = usethreads, maxquesize = maxquesize)
         @test_nowarn for batch in dl end
     end
 
     @testset ExtendedTestSet "collate, parallel" begin
-        dl = DataLoader(data, bs, buffered = false)
+        dl = DataLoader(data, bs, buffered = false, usethreads = usethreads, maxquesize = maxquesize)
         @test_nowarn for batch in dl end
     end
 
     @testset ExtendedTestSet "collate" begin
-        dl = DataLoader(data, bs, buffered = false)
+        dl = DataLoader(data, bs, buffered = false, usethreads = usethreads)
         @test_nowarn for batch in dl end
     end
 
     @testset ExtendedTestSet "collate, distributed" begin
-        dl = DataLoader(data, bs, buffered = false, usethreads = false)
+        dl = DataLoader(data, bs, buffered = false, usethreads = usethreads)
         @test_nowarn for batch in dl end
     end
 
     @testset ExtendedTestSet "buffer, collate" begin
-        dl = DataLoader(data, bs, buffered = true)
+        dl = DataLoader(data, bs, buffered = true, usethreads = usethreads)
         @test_nowarn for batch in dl end
     end
+end
+
 end
