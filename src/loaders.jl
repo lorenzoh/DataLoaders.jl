@@ -2,11 +2,17 @@
 
 struct GetObsParallel{TData}
     data::TData
+    usethreads::Bool
     useprimary::Bool
-    function GetObsParallel(data::TData; useprimary = false) where {TData}
-        (useprimary || Threads.nthreads() > 1) ||
-            error("Cannot load data off main thread with only one thread available. Pass `useprimary = true` or start Julia with > 1 threads.")
-        return new{TData}(data, useprimary)
+    function GetObsParallel(data::TData; usethreads = true, useprimary = false) where {TData}
+        if usethreads
+            (useprimary || nthreads() > 1) ||
+                error("Cannot load data off main thread with only one thread available. Pass `useprimary = true` or start Julia with > 1 threads.")
+        else
+            (useprimary || nworkers() > 1) ||
+                error("Cannot load data off main thread with only one process available. Pass `useprimary = true` or start Julia with > 1 processes.")
+        end
+        return new{TData}(data, usethreads, useprimary)
     end
 end
 
@@ -14,10 +20,14 @@ end
 Base.length(iterparallel::GetObsParallel) = nobs(iterparallel.data)
 
 function Base.iterate(iterparallel::GetObsParallel)
-    resultschannel = Channel(Threads.nthreads() - Int(!iterparallel.useprimary))
+    resultschannel = if iterparallel.usethreads
+        Channel(nthreads() - Int(!iterparallel.useprimary))
+    else
+        RemoteChannel(Distributed.nprocs() - Int(!iterparallel.useprimary))
+    end
 
     workerpool =
-        WorkerPool(1:nobs(iterparallel.data), useprimary = iterparallel.useprimary) do idx
+        WorkerPool(1:nobs(iterparallel.data), usethreads=iterparallel.usethreads, useprimary = iterparallel.useprimary) do idx
             put!(resultschannel, getobs(iterparallel.data, idx))
         end
     @async run(workerpool)
@@ -30,7 +40,7 @@ function Base.iterate(iterparallel::GetObsParallel, state)
     resultschannel, workerpool, index = state
 
     # Worker pool failed
-    if workerpool.state === Failed
+    if fetch(workerpool.state) === Failed
         error("Worker pool failed.")
         # Iteration complete
     elseif index >= nobs(iterparallel.data)
@@ -58,7 +68,7 @@ end
 Base.show(io::IO, bufparallel::BufferGetObsParallel) = print(io, "eachobsparallel($(bufparallel.data))")
 
 function BufferGetObsParallel(data; useprimary = false)
-    nthreads = Threads.nthreads() - Int(!useprimary)
+    nthreads = nthreads() - Int(!useprimary)
     nthreads > 0 ||
         error("Cannot load data off main thread with only one thread available. Pass `useprimary = true` or start Julia with > 1 threads.")
 
@@ -94,7 +104,7 @@ function Base.iterate(iterparallel::BufferGetObsParallel, state)
     ringbuffer, workerpool, index = state
 
     # Worker pool failed
-    if workerpool.state === Failed
+    if fetch(workerpool.state) === Failed
         error("Worker pool failed.")
         # Iteration complete
     elseif index >= nobs(iterparallel.data)
@@ -124,6 +134,6 @@ See also `MLDataPattern.eachobs`
     are returned in the correct order.
 
 """
-eachobsparallel(data; useprimary = false, buffered = true) =
+eachobsparallel(data; usethreads = true, useprimary = false, buffered = true) =
     buffered ? BufferGetObsParallel(data, useprimary = useprimary) :
-    GetObsParallel(data, useprimary = useprimary)
+    GetObsParallel(data, usethreads = usethreads, useprimary = useprimary)

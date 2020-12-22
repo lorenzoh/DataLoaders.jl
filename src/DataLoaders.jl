@@ -1,5 +1,7 @@
 module DataLoaders
 
+using Base.Threads
+using Distributed
 using MLDataPattern
 using ThreadPools
 using LearnBase
@@ -57,14 +59,25 @@ function DataLoader(
         collate = !isnothing(batchsize),
         buffered = collate,
         partial = true,
-        useprimary = Threads.nthreads() == 1,
+        usethreads = true,
+        useprimary = usethreads ? nthreads() == 1 : nprocs() == 1,
     )
 
-    Threads.nthreads() > 1 || useprimary || error(
+    !usethreads || nthreads() > 1 || useprimary || error(
         "Julia is running with one thread only, either pass `useprimary = true` or " *
         "start Julia with multiple threads by passing " *
         "the `-t n` option or setting the `JULIA_NUM_THREADS` " *
         "environment variable before starting Julia.")
+
+    usethreads || Distributed.nprocs() > 1 || useprimary || error(
+        "Julia is running with one procs only, either pass `useprimary = true` or " *
+        "start Julia with multiple threads by passing " *
+        "the `-p n` option " *
+        "environment variable before starting Julia.")
+
+    usethreads || !buffered || error(
+        "Buffered loading is not compatible with `usethreads = false`"
+    )
 
     batchwrapper = if isnothing(batchsize)
         identity
@@ -75,7 +88,7 @@ function DataLoader(
         data -> batchview(data, size = batchsize)
     end
 
-    loadwrapper = data -> eachobsparallel(data; useprimary = useprimary, buffered = buffered)
+    loadwrapper = data -> eachobsparallel(data; usethreads = usethreads, useprimary = useprimary, buffered = buffered)
 
     return loadwrapper(batchwrapper(data))
 end
