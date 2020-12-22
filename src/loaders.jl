@@ -25,11 +25,11 @@ function Base.iterate(iterparallel::GetObsParallel)
     resultschannel = if iterparallel.usethreads
         Channel(iterparallel.maxquesize)
     else
-        RemoteChannel(iterparallel.maxquesize)
+        RemoteChannel(() -> Channel(iterparallel.maxquesize))
     end
 
     workerpool =
-        WorkerPool(1:nobs(iterparallel.data), usethreads=iterparallel.usethreads, useprimary = iterparallel.useprimary) do idx
+        WorkerPool(1:nobs(iterparallel.data), usethreads = iterparallel.usethreads, useprimary = iterparallel.useprimary) do idx
             put!(resultschannel, getobs(iterparallel.data, idx))
         end
     @async run(workerpool)
@@ -96,15 +96,15 @@ Base.length(iterparallel::BufferGetObsParallel) = nobs(iterparallel.data)
 
 function Base.iterate(iterparallel::BufferGetObsParallel)
     if iterparallel.usethreads
-        ringbuffer = RingBuffer(iterparallel.buffers)
+        resultschannel = RingBuffer(iterparallel.buffers)
         workerpool =
             WorkerPool(1:nobs(iterparallel.data), useprimary = iterparallel.useprimary) do idx
-                put!(ringbuffer) do buf
+                put!(resultschannel) do buf
                     getobs!(buf, iterparallel.data, idx)
                 end
             end
     else
-        resultschannel = RemoteChannel(iterparallel.maxquesize)
+        resultschannel = RemoteChannel(() -> Channel(iterparallel.maxquesize))
         workerpool =
             WorkerPool(1:nobs(iterparallel.data), usethreads=iterparallel.usethreads, useprimary = iterparallel.useprimary) do idx
                 put!(resultschannel, getobs(iterparallel.data, idx))
@@ -113,12 +113,12 @@ function Base.iterate(iterparallel::BufferGetObsParallel)
 
     @async run(workerpool)
 
-    return iterate(iterparallel, (ringbuffer, workerpool, 0))
+    return iterate(iterparallel, (resultschannel, workerpool, 0))
 end
 
 
 function Base.iterate(iterparallel::BufferGetObsParallel, state)
-    ringbuffer, workerpool, index = state
+    resultschannel, workerpool, index = state
 
     # Worker pool failed
     if fetch(workerpool.state) === Failed
@@ -127,7 +127,7 @@ function Base.iterate(iterparallel::BufferGetObsParallel, state)
     elseif index >= nobs(iterparallel.data)
         return nothing
     else
-        return take!(ringbuffer), (ringbuffer, workerpool, index + 1)
+        return take!(resultschannel), (resultschannel, workerpool, index + 1)
     end
 end
 
@@ -152,5 +152,5 @@ See also `MLDataPattern.eachobs`
 
 """
 eachobsparallel(data; usethreads = true, useprimary = false, buffered = true, maxquesize = nothing) =
-    buffered ? BufferGetObsParallel(data, useprimary = useprimary, maxquesize = maxquesize) :
+    buffered ? BufferGetObsParallel(data,  usethreads = usethreads, useprimary = useprimary, maxquesize = maxquesize) :
     GetObsParallel(data, usethreads = usethreads, useprimary = useprimary, maxquesize = maxquesize)
