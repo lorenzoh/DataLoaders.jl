@@ -1,3 +1,9 @@
+using Distributed
+
+addprocs(2)
+
+@everywhere begin
+
 using Test
 using TestSetExtensions
 using DataLoaders
@@ -21,6 +27,7 @@ LearnBase.getobs!(buf, ds::MockDataset, idx::Int) =
     ds.inplace ? fill!(buf, 0.3) : getobs(ds, idx)
 LearnBase.nobs(ds::MockDataset) = ds.n
 
+end
 
 @testset ExtendedTestSet "collate" begin
     @test collate([([1, 2], 3), ([4, 5], 6)]) == ([1 4; 2 5], [3, 6])
@@ -178,7 +185,7 @@ end
 @testset ExtendedTestSet "DataLoader" begin
     data = MockDataset(256, (10, 5), true)
     bs = 8
-
+    
     @testset ExtendedTestSet "buffer, collate, parallel" begin
         dl = DataLoader(data, bs)
         @test_nowarn for batch in dl end
@@ -189,6 +196,11 @@ end
         @test_nowarn for batch in dl end
     end
 
+    @testset ExtendedTestSet "buffer, collate, parallel, samples, distributed" begin
+        dl = DataLoader(data, nothing, usethreads = false)
+        @test_nowarn for batch in dl end
+    end
+
     @testset ExtendedTestSet "collate, parallel" begin
         dl = DataLoader(data, bs, buffered = false)
         @test_nowarn for batch in dl end
@@ -196,6 +208,11 @@ end
 
     @testset ExtendedTestSet "collate" begin
         dl = DataLoader(data, bs, buffered = false)
+        @test_nowarn for batch in dl end
+    end
+
+    @testset ExtendedTestSet "collate, distributed" begin
+        dl = DataLoader(data, bs, buffered = false, usethreads = false)
         @test_nowarn for batch in dl end
     end
 
