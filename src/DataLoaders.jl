@@ -45,6 +45,7 @@ for PyTorch users.
 - `parallel::Bool = Threads.nthreads() > 1)`: Whether to load data
   in parallel, keeping the primary thread is. Default is `true` if
   more than one thread is available.
+- `usethreads::Bool = true`: Whether to use threads or processes
 - `useprimary::Bool = false`: If `false`, keep the main thread free when loading
   data in parallel. Is ignored if `parallel` is `false`.
 
