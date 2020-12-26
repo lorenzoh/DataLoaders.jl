@@ -104,7 +104,7 @@ function on_worker(tasks, state, workerfn, usethreads, useprimary)
     # task error handling
     id = usethreads ? threadid() : myid()
     !useprimary && id == 1 && return
-    while isready(tasks)
+    while isopen(tasks) && isready(tasks)
         fetch(state) !== Failed || error("Shutting down worker $id")
         args = take!(tasks)
         inloop(state, workerfn, id, args)

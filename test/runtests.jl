@@ -1,6 +1,6 @@
 using Distributed
 
-addprocs(2)
+# addprocs(8)
 
 @everywhere begin
 
@@ -142,7 +142,7 @@ end
 
     @testset ExtendedTestSet "iterate" begin
         dl = make()
-        x, (results, workerpool, idx) = iterate(dl)
+        x, (task, results, workerpool, idx) = iterate(dl)
         @test idx == 1
         @test_nowarn for obs in dl
         end
@@ -155,7 +155,7 @@ end
 
     @testset ExtendedTestSet "iterate" begin
         dl = make()
-        x, (ringbuffer, workerpool, idx) = iterate(dl)
+        x, (task, ringbuffer, workerpool, idx) = iterate(dl)
         @test idx == 1
         @test_nowarn for obs in dl
         end

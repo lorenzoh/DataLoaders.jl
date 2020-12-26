@@ -32,23 +32,25 @@ function Base.iterate(iterparallel::GetObsParallel)
         WorkerPool(1:nobs(iterparallel.data), usethreads = iterparallel.usethreads, useprimary = iterparallel.useprimary) do idx
             put!(resultschannel, getobs(iterparallel.data, idx))
         end
-    @async run(workerpool)
+    task = @async run(workerpool)
 
-    return iterate(iterparallel, (resultschannel, workerpool, 0))
+    return iterate(iterparallel, (task, resultschannel, workerpool, 0))
 end
 
 
 function Base.iterate(iterparallel::GetObsParallel, state)
-    resultschannel, workerpool, index = state
+    task, resultschannel, workerpool, index = state
 
     # Worker pool failed
     if fetch(workerpool.state) === Failed
         error("Worker pool failed.")
         # Iteration complete
     elseif index >= nobs(iterparallel.data)
+        close(resultschannel)
+        wait(task)
         return nothing
     else
-        return take!(resultschannel), (resultschannel, workerpool, index + 1)
+        return take!(resultschannel), (task, resultschannel, workerpool, index + 1)
     end
 end
 
@@ -99,7 +101,7 @@ function Base.iterate(iterparallel::BufferGetObsParallel)
         resultschannel = RingBuffer(iterparallel.buffers)
         workerpool =
             WorkerPool(1:nobs(iterparallel.data), useprimary = iterparallel.useprimary) do idx
-                put!(resultschannel) do buf
+                isopen(resultschannel) && put!(resultschannel) do buf
                     getobs!(buf, iterparallel.data, idx)
                 end
             end
@@ -107,27 +109,28 @@ function Base.iterate(iterparallel::BufferGetObsParallel)
         resultschannel = RemoteChannel(() -> Channel(iterparallel.maxquesize))
         workerpool =
             WorkerPool(1:nobs(iterparallel.data), usethreads=iterparallel.usethreads, useprimary = iterparallel.useprimary) do idx
-                put!(resultschannel, getobs(iterparallel.data, idx))
+                isopen(resultschannel) && put!(resultschannel, getobs(iterparallel.data, idx))
             end
     end
+    task = @async run(workerpool)
 
-    @async run(workerpool)
-
-    return iterate(iterparallel, (resultschannel, workerpool, 0))
+    return iterate(iterparallel, (task, resultschannel, workerpool, 0))
 end
 
 
 function Base.iterate(iterparallel::BufferGetObsParallel, state)
-    resultschannel, workerpool, index = state
+    task, resultschannel, workerpool, index = state
 
     # Worker pool failed
     if fetch(workerpool.state) === Failed
         error("Worker pool failed.")
         # Iteration complete
     elseif index >= nobs(iterparallel.data)
+        close(resultschannel)
+        wait(task)
         return nothing
     else
-        return take!(resultschannel), (resultschannel, workerpool, index + 1)
+        return take!(resultschannel), (task, resultschannel, workerpool, index + 1)
     end
 end
 
