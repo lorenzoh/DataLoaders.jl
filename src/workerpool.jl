@@ -57,7 +57,7 @@ function run(pool::WorkerPool{TArgs}) where TArgs
 
     # watchdog that sends exception to main thread if a worker fails
     maintask = current_task()
-    @async begin
+    watchdog = @async begin
         while fetch(state) !== Done
             if fetch(state) === Failed
                 Base.throwto(
@@ -85,6 +85,7 @@ function run(pool::WorkerPool{TArgs}) where TArgs
 
     # Tasks completed successfully
     put!(state, Done)
+    wait(watchdog)
 end
 
 function inloop(state, workerfn, id, args)
