@@ -1,6 +1,6 @@
 using Distributed
 
-# addprocs(8)
+addprocs(2)
 
 @everywhere begin
 

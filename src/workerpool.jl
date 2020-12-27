@@ -74,8 +74,9 @@ function run(pool::WorkerPool{TArgs}) where TArgs
             inloop(state, workerfn, threadid(), args)
         end
     else
-        tasks = Channel{TArgs}(length(pool.args))
+        tasks = Channel{TArgs}(Inf)
         foreach(a -> put!(tasks, a), pool.args)
+        close(tasks)
         remote_state = RemoteChannel(() -> state)
         remote_tasks = RemoteChannel(() -> tasks)
         @sync for id in (useprimary ? procs() : workers())
@@ -105,9 +106,9 @@ function on_worker(tasks, state, workerfn, usethreads, useprimary)
     # task error handling
     id = usethreads ? threadid() : myid()
     !useprimary && id == 1 && return
-    while isopen(tasks) && isready(tasks)
+    while isready(tasks)
+        args = try take!(tasks) catch e break end
         fetch(state) !== Failed || error("Shutting down worker $id")
-        args = take!(tasks)
         inloop(state, workerfn, id, args)
     end
 end

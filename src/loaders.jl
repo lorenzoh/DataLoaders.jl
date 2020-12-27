@@ -101,7 +101,7 @@ function Base.iterate(iterparallel::BufferGetObsParallel)
         resultschannel = RingBuffer(iterparallel.buffers)
         workerpool =
             WorkerPool(1:nobs(iterparallel.data), useprimary = iterparallel.useprimary) do idx
-                isopen(resultschannel) && put!(resultschannel) do buf
+                put!(resultschannel) do buf
                     getobs!(buf, iterparallel.data, idx)
                 end
             end
@@ -109,7 +109,7 @@ function Base.iterate(iterparallel::BufferGetObsParallel)
         resultschannel = RemoteChannel(() -> Channel(iterparallel.maxquesize))
         workerpool =
             WorkerPool(1:nobs(iterparallel.data), usethreads=iterparallel.usethreads, useprimary = iterparallel.useprimary) do idx
-                isopen(resultschannel) && put!(resultschannel, getobs(iterparallel.data, idx))
+                put!(resultschannel, getobs(iterparallel.data, idx))
             end
     end
     task = @async run(workerpool)

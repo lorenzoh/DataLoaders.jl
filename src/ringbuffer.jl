@@ -83,8 +83,7 @@ function Base.put!(f!, ringbuffer::RingBuffer)
 end
 
 function Base.isopen(ringbuffer::RingBuffer)
-    isopen(ringbuffer.results)
-    isopen(ringbuffer.buffers)
+    isopen(ringbuffer.results) && isopen(ringbuffer.buffers)
 end
 
 function Base.close(ringbuffer::RingBuffer)
