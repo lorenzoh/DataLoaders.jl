@@ -4,6 +4,7 @@ authors = ["lorenzoh <lorenz.ohly@gmail.com>"]
 version = "0.1.2"
 
 [deps]
+Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 LearnBase = "7f8f8fb0-2700-5f03-b4bd-41f8cfc144b6"
 MLDataPattern = "9920b226-0b2a-5f5f-9153-9aa70a013f8b"

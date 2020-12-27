@@ -1,3 +1,9 @@
+using Distributed
+
+addprocs(2)
+
+@everywhere begin
+
 using Test
 using TestSetExtensions
 using DataLoaders
@@ -21,6 +27,7 @@ LearnBase.getobs!(buf, ds::MockDataset, idx::Int) =
     ds.inplace ? fill!(buf, 0.3) : getobs(ds, idx)
 LearnBase.nobs(ds::MockDataset) = ds.n
 
+end
 
 @testset ExtendedTestSet "collate" begin
     @test collate([([1, 2], 3), ([4, 5], 6)]) == ([1 4; 2 5], [3, 6])
@@ -135,7 +142,7 @@ end
 
     @testset ExtendedTestSet "iterate" begin
         dl = make()
-        x, (results, workerpool, idx) = iterate(dl)
+        x, (task, results, workerpool, idx) = iterate(dl)
         @test idx == 1
         @test_nowarn for obs in dl
         end
@@ -148,7 +155,7 @@ end
 
     @testset ExtendedTestSet "iterate" begin
         dl = make()
-        x, (ringbuffer, workerpool, idx) = iterate(dl)
+        x, (task, ringbuffer, workerpool, idx) = iterate(dl)
         @test idx == 1
         @test_nowarn for obs in dl
         end
@@ -174,33 +181,46 @@ end
 
 end
 
+for usethreads in (true, false), maxquesize in (nothing, 4, 8)
 
-@testset ExtendedTestSet "DataLoader" begin
+@testset ExtendedTestSet "DataLoader: usethreads=$usethreads, maxquesize=$maxquesize" begin
     data = MockDataset(256, (10, 5), true)
     bs = 8
-
+    
     @testset ExtendedTestSet "buffer, collate, parallel" begin
-        dl = DataLoader(data, bs)
+        dl = DataLoader(data, bs, usethreads = usethreads, maxquesize = maxquesize)
         @test_nowarn for batch in dl end
     end
 
     @testset ExtendedTestSet "buffer, collate, parallel, samples" begin
-        dl = DataLoader(data, nothing)
+        dl = DataLoader(data, nothing, usethreads = usethreads, maxquesize = maxquesize)
+        @test_nowarn for batch in dl end
+    end
+
+    @testset ExtendedTestSet "buffer, collate, parallel, samples, distributed" begin
+        dl = DataLoader(data, nothing, usethreads = usethreads, maxquesize = maxquesize)
         @test_nowarn for batch in dl end
     end
 
     @testset ExtendedTestSet "collate, parallel" begin
-        dl = DataLoader(data, bs, buffered = false)
+        dl = DataLoader(data, bs, buffered = false, usethreads = usethreads, maxquesize = maxquesize)
         @test_nowarn for batch in dl end
     end
 
     @testset ExtendedTestSet "collate" begin
-        dl = DataLoader(data, bs, buffered = false)
+        dl = DataLoader(data, bs, buffered = false, usethreads = usethreads)
+        @test_nowarn for batch in dl end
+    end
+
+    @testset ExtendedTestSet "collate, distributed" begin
+        dl = DataLoader(data, bs, buffered = false, usethreads = usethreads)
         @test_nowarn for batch in dl end
     end
 
     @testset ExtendedTestSet "buffer, collate" begin
-        dl = DataLoader(data, bs, buffered = true)
+        dl = DataLoader(data, bs, buffered = true, usethreads = usethreads)
         @test_nowarn for batch in dl end
     end
+end
+
 end

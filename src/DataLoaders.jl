@@ -1,5 +1,7 @@
 module DataLoaders
 
+using Base.Threads
+using Distributed
 using MLDataPattern
 using ThreadPools
 using LearnBase
@@ -43,8 +45,10 @@ for PyTorch users.
 - `parallel::Bool = Threads.nthreads() > 1)`: Whether to load data
   in parallel, keeping the primary thread is. Default is `true` if
   more than one thread is available.
+- `usethreads::Bool = true`: Whether to use threads or processes
 - `useprimary::Bool = false`: If `false`, keep the main thread free when loading
   data in parallel. Is ignored if `parallel` is `false`.
+- `maxquesize = nothing`: Maximum size of caching queue.
 
 ## Examples
 
@@ -57,13 +61,21 @@ function DataLoader(
         collate = !isnothing(batchsize),
         buffered = collate,
         partial = true,
-        useprimary = Threads.nthreads() == 1,
+        usethreads = true,
+        useprimary = usethreads ? nthreads() == 1 : nprocs() == 1,
+        maxquesize = nothing,
     )
 
-    Threads.nthreads() > 1 || useprimary || error(
+    !usethreads || nthreads() > 1 || useprimary || error(
         "Julia is running with one thread only, either pass `useprimary = true` or " *
         "start Julia with multiple threads by passing " *
         "the `-t n` option or setting the `JULIA_NUM_THREADS` " *
+        "environment variable before starting Julia.")
+
+    usethreads || nprocs() > 1 || useprimary || error(
+        "Julia is running with one procs only, either pass `useprimary = true` or " *
+        "start Julia with multiple threads by passing " *
+        "the `-p n` option " *
         "environment variable before starting Julia.")
 
     batchwrapper = if isnothing(batchsize)
@@ -75,7 +87,7 @@ function DataLoader(
         data -> batchview(data, size = batchsize)
     end
 
-    loadwrapper = data -> eachobsparallel(data; useprimary = useprimary, buffered = buffered)
+    loadwrapper = data -> eachobsparallel(data; usethreads = usethreads, useprimary = useprimary, buffered = buffered, maxquesize = maxquesize)
 
     return loadwrapper(batchwrapper(data))
 end
