@@ -1,5 +1,5 @@
 
-# Shuffling, subsetting, sampling
+# Shuffling, subsetting, splitting
 
 Shuffling your training data every epoch and splitting a dataset into training and validation splits are common practices.
 While `DataLoaders` itself only provides tools to load your data effectively, using the underlying `MLDataPattern` package makes these things easy.
