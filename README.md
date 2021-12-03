@@ -1,22 +1,37 @@
-# DataLoaders
+# DataLoaders.jl
 
 [Documentation (latest)](https://lorenzoh.github.io/DataLoaders.jl/dev)
 
-A threaded data iterator for machine learning on out-of-memory datasets. Inspired by PyTorch's DataLoader.
+A Julia package implementing performant data loading for deep learning on out-of-memory datasets that. Works like PyTorch's `DataLoader`.
 
-It uses  to load data **in parallel** while keeping the primary thread free. It can also load data **inplace** to avoid allocations.
+### What does it do?
 
-Many data containers work out of the box and it is easy to [extend with your own](docs/datacontainers.md).
+- Uses multi-threading to load data in parallel while keeping the primary thread free for the training loop
+- Handles batching and [collating](docs/collate.md)
+- Is simple to [extend](docs/interface.md) for custom datasets
+- Integrates well with other packages in the [ecosystem](docs/ecosystem.md)
+- Allows for [inplace loading](docs/inplaceloading.md) to reduce memory load
 
-`DataLoaders` is built on top of and fully compatible with `MLDataPattern.jl`'s [Data Access Pattern](https://mldatautilsjl.readthedocs.io/en/latest/data/pattern.html), a functional interface for machine learning datasets.
+### When should you use it?
 
-## Usage
+- You have a dataset that does not fit into memory
+- You want to reduce the time your training loop is waiting for the next batch of data
+
+### How do you use it?
+
+Install like any other Julia package using the package manager (see [setup](docs/setup.md)):
+
+```julia-repl
+]add DataLoaders
+```
+
+After installation, import it, create a `DataLoader` from a dataset and batch size, and iterate over it:
 
 ```julia
-x = rand(128, 10000)  #  10000 observations of size 128
-y = rand(1, 10000)
-
-dataloader = DataLoader((x, y), 16)
+using DataLoaders
+# 10.000 observations of inputs with 128 features and one target feature
+data = (rand(128, 10000), rand(1, 10000))
+dataloader = DataLoader(data, 16)
 
 for (xs, ys) in dataloader
     @assert size(xs) == (128, 16)
@@ -24,18 +39,7 @@ for (xs, ys) in dataloader
 end
 ```
 
-Of course, in the above example, we can keep the dataset in memory and don't need parallel workers. See [Custom data containers](docs/datacontainers.md) for a more realistic example.
+### Next, you may want to read
 
-## Getting Started
-
-If you get the idea and know it from PyTorch, see [Quickstart for PyTorch users](docs/quickstartpytorch.md).
-
-Otherwise, read on [here](docs/motivation.md).
-
-Available methods are documented [here](docstrings.md).
-
-## Acknowledgements
-
-- [`MLDataPattern.jl`](https://github.com/JuliaML/MLDataPattern.jl)
-- [`ThreadPools.jl`](https://github.com/tro3/ThreadPools.jl)
-- [PyTorch `DataLoader`](https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader)
+- [What datasets you can use it with](docs/datacontainers.md)
+- [How it compares to PyTorch's data loader](docs/quickstartpytorch.md)

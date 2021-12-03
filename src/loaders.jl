@@ -124,6 +124,6 @@ See also `MLDataPattern.eachobs`
     are returned in the correct order.
 
 """
-eachobsparallel(data; useprimary = false, buffered = true) =
+eachobsparallel(data; useprimary = Threads.nthreads() == 1, buffered = false) =
     buffered ? BufferGetObsParallel(data, useprimary = useprimary) :
     GetObsParallel(data, useprimary = useprimary)

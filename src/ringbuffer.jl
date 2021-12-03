@@ -21,8 +21,6 @@ res = take!(ringbuffer)
 
     Only one result is valid at a time! On the next `take!`, the previous
     result will be reused as a buffer and be mutated by a `put!`
-
-See also [`put!`](#)
 """
 mutable struct RingBuffer{T}
     buffers::Channel{T}

@@ -1,4 +1,9 @@
 
+"""
+    collate(samples)
+
+Collates a vector of samples into a single batch. See [collating](../documents/docs/collate.md).
+"""
 function collate(samples::AbstractVector{<:Tuple})
     !isempty(samples) || return samples
     return tuple([collate([s[key] for s in samples]) for key in keys(samples[1])]...)
