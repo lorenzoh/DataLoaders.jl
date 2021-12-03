@@ -26,54 +26,50 @@
         <input id="search-input" placeholder="Search">
         <select id="version-selector"></select>
     </div>
-    <main id="page"><article><h1 id="dataloaders"><a href="#dataloaders" class="anchor"></a>DataLoaders</h1>
+    <main id="page"><article><h1 id="dataloadersjl"><a href="#dataloadersjl" class="anchor"></a>DataLoaders.jl</h1>
 <p><a href="https://lorenzoh.github.io/DataLoaders.jl/dev">Documentation (latest)</a></p>
-<p>A threaded data iterator for machine learning on out-of-memory datasets. Inspired by PyTorch’s DataLoader.</p>
-<p>It uses  to load data <strong>in parallel</strong> while keeping the primary thread free. It can also load data <strong>inplace</strong> to avoid allocations.</p>
-<p>Many data containers work out of the box and it is easy to <a href="docs/datacontainers.html">extend with your own</a>.</p>
-<p><code>DataLoaders</code> is built on top of and fully compatible with <code>MLDataPattern.jl</code>’s <a href="https://mldatautilsjl.readthedocs.io/en/latest/data/pattern.html">Data Access Pattern</a>, a functional interface for machine learning datasets.</p>
-<h2 id="usage"><a href="#usage" class="anchor"></a>Usage</h2>
-<pre><code class="language-julia">x = rand(128, 10000)  #  10000 observations of size 128
-y = rand(1, 10000)
-
-dataloader = DataLoader((x, y), 16)
+<p>A Julia package implementing performant data loading for deep learning on out-of-memory datasets that. Works like PyTorch’s <code>DataLoader</code>.</p>
+<h3 id="what-does-it-do"><a href="#what-does-it-do" class="anchor"></a>What does it do?</h3>
+<ul>
+<li>Uses multi-threading to load data in parallel while keeping the primary thread free for the training loop</li>
+<li>Handles batching and <a href="docs/collate.md">collating</a></li>
+<li>Is simple to <a href="docs/interface.md">extend</a> for custom datasets</li>
+<li>Integrates well with other packages in the <a href="docs/ecosystem.md">ecosystem</a></li>
+<li>Allows for <a href="docs/inplaceloading.md">inplace loading</a> to reduce memory load</li>
+</ul>
+<h3 id="when-should-you-use-it"><a href="#when-should-you-use-it" class="anchor"></a>When should you use it?</h3>
+<ul>
+<li>You have a dataset that does not fit into memory</li>
+<li>You want to reduce the time your training loop is waiting for the next batch of data</li>
+</ul>
+<h3 id="how-do-you-use-it"><a href="#how-do-you-use-it" class="anchor"></a>How do you use it?</h3>
+<p>Install like any other Julia package using the package manager (see <a href="docs/setup.md">setup</a>):</p>
+<pre><code class="language-julia-repl">]add DataLoaders
+</code></pre>
+<p>After installation, import it, create a <code>DataLoader</code> from a dataset and batch size, and iterate over it:</p>
+<pre><code class="language-julia">using DataLoaders
+# 10.000 observations of inputs with 128 features and one target feature
+data = (rand(128, 10000), rand(1, 10000))
+dataloader = DataLoader(data, 16)
 
 for (xs, ys) in dataloader
     @assert size(xs) == (128, 16)
     @assert size(ys) == (1, 16)
 end
 </code></pre>
-<p>Of course, in the above example, we can keep the dataset in memory and don’t need parallel workers. See <a href="docs/datacontainers.html">Custom data containers</a> for a more realistic example.</p>
-<h2 id="getting-started"><a href="#getting-started" class="anchor"></a>Getting Started</h2>
-<p>If you get the idea and know it from PyTorch, see <a href="docs/quickstartpytorch.html">Quickstart for PyTorch users</a>.</p>
-<p>Otherwise, read on <a href="docs/motivation.html">here</a>.</p>
-<p>Available methods are documented <a href="docstrings.html">here</a>.</p>
-<h2 id="acknowledgements"><a href="#acknowledgements" class="anchor"></a>Acknowledgements</h2>
+<h3 id="next-you-may-want-to-read"><a href="#next-you-may-want-to-read" class="anchor"></a>Next, you may want to read</h3>
 <ul>
-<li><a href="https://github.com/JuliaML/MLDataPattern.jl"><code>MLDataPattern.jl</code></a></li>
-<li><a href="https://github.com/tro3/ThreadPools.jl"><code>ThreadPools.jl</code></a></li>
-<li><a href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader">PyTorch <code>DataLoader</code></a></li>
+<li><a href="docs/datacontainers.md">What datasets you can use it with</a></li>
+<li><a href="docs/quickstartpytorch.md">How it compares to PyTorch’s data loader</a></li>
 </ul>
 </article>
         <div id="page-navigation">
             <a id="previous-page" title="Previous" href="README.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
-            <a id="next-page" title="Next" href="docs&#x2F;motivation.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="next-page" title="Next" href="docstrings&#x2F;Base.put!.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
         </div>
     </main>
-    <nav id="toc"><h3 id="guide"><a href="#guide" class="anchor"></a>Guide</h3>
-<ul>
-<li><a href="README.html">Introduction</a></li>
-<li><a href="docs/motivation.html">Motivation</a></li>
-<li><a href="docs/simpleexample.html">A simple example</a></li>
-<li><a href="docs/datacontainers.html">Data containers</a></li>
-<li><a href="docs/shuffling.html">Shuffling, subsetting, sampling</a></li>
-<li><a href="docs/quickstartpytorch.html">QuickStart for PyTorch users</a></li>
-<li><a href="docs/status.html">Project status</a></li>
-</ul>
-<h3 id="library"><a href="#library" class="anchor"></a>Library</h3>
-<ul>
-<li><a href="docs/overview.html">Overview</a></li>
-<li><a href="docstrings.html">Docstrings</a></li>
+    <nav id="toc"><ul>
+<li><a href="README.html">README</a></li>
 </ul>
 </nav>
     <footer>
