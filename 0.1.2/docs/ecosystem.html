@@ -17,7 +17,7 @@
     <script src="..&#x2F;julia.min.js"></script>
     <script src="..&#x2F;julia-repl.min.js"></script>
     <script src="..&#x2F;publish.js"></script>
-    <link rel="stylesheet" href="..&#x2F;docs&#x2F;custom.css" />
+    <link rel="stylesheet" href="custom.css" />
     
 </head>
 <body>
@@ -26,18 +26,16 @@
         <input id="search-input" placeholder="Search">
         <select id="version-selector"></select>
     </div>
-    <main id="page"><article><div class='docs' id='collate'>
-<p><code>private</code> <code>collate</code> — <code>function</code></p>
-<div class='doc' id='1'>
-<pre><code>collate(samples)
-</code></pre>
-<p>Collates a vector of samples into a single batch. See <a href="../documents/docs/collate.md">collating</a>.</p>
-</div>
-</div>
+    <main id="page"><article><h1 id="ecosystem"><a href="#ecosystem" class="anchor"></a>Ecosystem</h1>
+<p class="subtitle">Overview of packages that DataLoaders.jl builds on or that use it.</p>
+<p>This package is part of an ecosystem of packages providing useful tools for machine learning in Julia. These compose nicely due to shared interface packages like <a href="https://github.com/JuliaML/LearnBase.jl">LearnBase.jl</a> and the natural extensibility that Julia’s multiple dispatch provides. DataLoaders.jl works with any package the implements the <a href="interface.html">data container interface</a>. This means you can easily drop it in to an existing workflow or use the functionality of other packages to work with DataLoaders.jl more effectively.</p>
+<p>The most important package for manipulating data containers is <a href="https://github.com/JuliaML/MLDataPattern.jl"><strong>MLDataPattern.jl</strong></a> which provides a large set of tools for transforming and composing data containers. Some examples are given here: <a href="shuffling.html">Shuffling, subsetting, splitting</a></p>
+<p><a href="https://github.com/JuliaML/MLDatasets.jl"><strong>MLDatasets.jl</strong></a> makes it easy to load common benchmark datasets as data containers.</p>
+<p>A package that makes heavy use of DataLoaders.jl to train large deep learning models is <a href="https://github.com/FluxML/FastAI.jl"><strong>FastAI.jl</strong></a>. It also provides many easy-to-load data containers for larger computer vision, tabular, and NLP datasets.</p>
 </article>
         <div id="page-navigation">
-            <a id="previous-page" title="Previous" href="DataLoaders.batchindices.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
-            <a id="next-page" title="Next" href="DataLoaders.eachobsparallel.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="previous-page" title="Previous" href="interface.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="next-page" title="Next" href="quickstartpytorch.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
         </div>
     </main>
     <nav id="toc"><ul>

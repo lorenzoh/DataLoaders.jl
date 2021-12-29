@@ -17,7 +17,7 @@
     <script src="..&#x2F;julia.min.js"></script>
     <script src="..&#x2F;julia-repl.min.js"></script>
     <script src="..&#x2F;publish.js"></script>
-    <link rel="stylesheet" href="..&#x2F;docs&#x2F;custom.css" />
+    <link rel="stylesheet" href="custom.css" />
     
 </head>
 <body>
@@ -26,18 +26,26 @@
         <input id="search-input" placeholder="Search">
         <select id="version-selector"></select>
     </div>
-    <main id="page"><article><div class='docs' id='collate'>
-<p><code>private</code> <code>collate</code> — <code>function</code></p>
-<div class='doc' id='1'>
-<pre><code>collate(samples)
+    <main id="page"><article><h1 id="data-container-interface"><a href="#data-container-interface" class="anchor"></a>Data container interface</h1>
+<p class="subtitle">Reference for implementing the data container interface. See <a href="datacontainers.html">data containers</a> for an introduction.</p>
+<p>To implement the data container interface for a custom type <code>T</code>, you must implement two functions:</p>
+<ul>
+<li><code>LearnBase.getobs(data::T, i::Int)</code> loads the <code>i</code>-th observation</li>
+<li><code>LearnBase.nobs(data::T, i::Int)::Int</code> gives the number of observations in a data container</li>
+</ul>
+<p>You can <em>optionally</em> also implement:</p>
+<ul>
+<li><code>LearnBase.getobs!(buf, data::T, i::Int)</code>: loads the <code>i</code>-th observation into the preallocated buffer <code>buf</code>.</li>
+</ul>
+<p>See <a href="https://mldatapatternjl.readthedocs.io/en/latest/documentation/container.html">the MLDataPattern.jl documentation</a> for a comprehensive discussion of and reference for data containers.</p>
+<div class="admonition note"><p class="admonition-title">Extending functions</p>
+<p>To define a method for the above functions, you need to import the functions explicitly. You can do this without installing <code>LearnBase</code> by running:</p>
+<pre><code class="language-julia">import DataLoaders.LearnBase: getobs, nobs, getobs!
 </code></pre>
-<p>Collates a vector of samples into a single batch. See <a href="../documents/docs/collate.md">collating</a>.</p>
-</div>
-</div>
-</article>
+</div></article>
         <div id="page-navigation">
-            <a id="previous-page" title="Previous" href="DataLoaders.batchindices.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
-            <a id="next-page" title="Next" href="DataLoaders.eachobsparallel.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="previous-page" title="Previous" href="inplaceloading.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="next-page" title="Next" href="ecosystem.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
         </div>
     </main>
     <nav id="toc"><ul>

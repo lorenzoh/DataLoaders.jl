@@ -17,7 +17,7 @@
     <script src="..&#x2F;julia.min.js"></script>
     <script src="..&#x2F;julia-repl.min.js"></script>
     <script src="..&#x2F;publish.js"></script>
-    <link rel="stylesheet" href="..&#x2F;docs&#x2F;custom.css" />
+    <link rel="stylesheet" href="custom.css" />
     
 </head>
 <body>
@@ -26,18 +26,37 @@
         <input id="search-input" placeholder="Search">
         <select id="version-selector"></select>
     </div>
-    <main id="page"><article><div class='docs' id='collate'>
-<p><code>private</code> <code>collate</code> — <code>function</code></p>
-<div class='doc' id='1'>
-<pre><code>collate(samples)
+    <main id="page"><article><h1 id="shuffling-subsetting-splitting"><a href="#shuffling-subsetting-splitting" class="anchor"></a>Shuffling, subsetting, splitting</h1>
+<p>Shuffling your training data every epoch and splitting a dataset into training and validation splits are common practices.
+While <code>DataLoaders</code> itself only provides tools to load your data effectively, using the underlying <code>MLDataPattern</code> package makes these things easy.</p>
+<h2 id="examples"><a href="#examples" class="anchor"></a>Examples</h2>
+<h3 id="shuffling"><a href="#shuffling" class="anchor"></a>Shuffling</h3>
+<pre><code class="language-julia">using MLDataPattern: shuffleobs
+
+data = ...
+dataloader = DataLoader(shuffleobs(data), batchsize)
 </code></pre>
-<p>Collates a vector of samples into a single batch. See <a href="../documents/docs/collate.md">collating</a>.</p>
-</div>
-</div>
+<h3 id="subsetting"><a href="#subsetting" class="anchor"></a>Subsetting</h3>
+<pre><code class="language-julia">using MLDataPattern: datasubset
+
+data = ...
+idxs = 1:1000  # indices to select from dataset
+  
+dataloader = DataLoader(datasubset(data, idxs)), batchsize)
+</code></pre>
+<h3 id="trainvalidation-split"><a href="#trainvalidation-split" class="anchor"></a>Train/validation split</h3>
+<pre><code class="language-julia">using MLDataPattern: splitobs
+    
+data = ...
+traindata, valdata = splitobs(data, 0.8)  # 80/20 split
+dataloader = DataLoader(shuffleobs(data), batchsize)
+</code></pre>
+<h2 id="but-wait-theres-more"><a href="#but-wait-theres-more" class="anchor"></a>But wait, there’s more</h2>
+<p>For other dataset operations like weighted sampling, see <a href="https://mldatapatternjl.readthedocs.io/en/latest/documentation/datasubset.html">this section</a> in MLDataPattern’s documentation.</p>
 </article>
         <div id="page-navigation">
-            <a id="previous-page" title="Previous" href="DataLoaders.batchindices.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
-            <a id="next-page" title="Next" href="DataLoaders.eachobsparallel.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="previous-page" title="Previous" href="datacontainers.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="next-page" title="Next" href="collate.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
         </div>
     </main>
     <nav id="toc"><ul>

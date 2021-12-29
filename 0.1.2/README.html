@@ -32,10 +32,10 @@
 <h3 id="what-does-it-do"><a href="#what-does-it-do" class="anchor"></a>What does it do?</h3>
 <ul>
 <li>Uses multi-threading to load data in parallel while keeping the primary thread free for the training loop</li>
-<li>Handles batching and <a href="docs/collate.md">collating</a></li>
-<li>Is simple to <a href="docs/interface.md">extend</a> for custom datasets</li>
-<li>Integrates well with other packages in the <a href="docs/ecosystem.md">ecosystem</a></li>
-<li>Allows for <a href="docs/inplaceloading.md">inplace loading</a> to reduce memory load</li>
+<li>Handles batching and <a href="docs/collate.html">collating</a></li>
+<li>Is simple to <a href="docs/interface.html">extend</a> for custom datasets</li>
+<li>Integrates well with other packages in the <a href="docs/ecosystem.html">ecosystem</a></li>
+<li>Allows for <a href="docs/inplaceloading.html">inplace loading</a> to reduce memory load</li>
 </ul>
 <h3 id="when-should-you-use-it"><a href="#when-should-you-use-it" class="anchor"></a>When should you use it?</h3>
 <ul>
@@ -43,7 +43,7 @@
 <li>You want to reduce the time your training loop is waiting for the next batch of data</li>
 </ul>
 <h3 id="how-do-you-use-it"><a href="#how-do-you-use-it" class="anchor"></a>How do you use it?</h3>
-<p>Install like any other Julia package using the package manager (see <a href="docs/setup.md">setup</a>):</p>
+<p>Install like any other Julia package using the package manager (see <a href="docs/setup.html">setup</a>):</p>
 <pre><code class="language-julia-repl">]add DataLoaders
 </code></pre>
 <p>After installation, import it, create a <code>DataLoader</code> from a dataset and batch size, and iterate over it:</p>
@@ -59,17 +59,27 @@ end
 </code></pre>
 <h3 id="next-you-may-want-to-read"><a href="#next-you-may-want-to-read" class="anchor"></a>Next, you may want to read</h3>
 <ul>
-<li><a href="docs/datacontainers.md">What datasets you can use it with</a></li>
-<li><a href="docs/quickstartpytorch.md">How it compares to PyTorch’s data loader</a></li>
+<li><a href="docs/datacontainers.html">What datasets you can use it with</a></li>
+<li><a href="docs/quickstartpytorch.html">How it compares to PyTorch’s data loader</a></li>
 </ul>
 </article>
         <div id="page-navigation">
             <a id="previous-page" title="Previous" href="README.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
-            <a id="next-page" title="Next" href="docstrings&#x2F;Base.put!.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="next-page" title="Next" href="docs&#x2F;overview.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
         </div>
     </main>
     <nav id="toc"><ul>
-<li><a href="README.html">README</a></li>
+<li><a href="README.html">Introduction</a></li>
+<li><a href="docs/overview.html">Overview</a></li>
+<li><a href="docs/setup.html">Installation</a></li>
+<li><a href="docs/datacontainers.html">Data containers</a></li>
+<li><a href="docs/shuffling.html">Shuffling, subsetting, splitting</a></li>
+<li><a href="docs/collate.html">Collating</a></li>
+<li><a href="docs/inplaceloading.html">Inplace loading</a></li>
+<li><a href="docs/interface.html">Data container interface</a></li>
+<li><a href="docs/ecosystem.html">Ecosystem</a></li>
+<li><a href="docs/quickstartpytorch.html">Comparison to PyTorch</a></li>
+<li><a href="docs/status.html">TODOs</a></li>
 </ul>
 </nav>
     <footer>

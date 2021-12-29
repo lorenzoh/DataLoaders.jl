@@ -17,7 +17,7 @@
     <script src="..&#x2F;julia.min.js"></script>
     <script src="..&#x2F;julia-repl.min.js"></script>
     <script src="..&#x2F;publish.js"></script>
-    <link rel="stylesheet" href="..&#x2F;docs&#x2F;custom.css" />
+    <link rel="stylesheet" href="custom.css" />
     
 </head>
 <body>
@@ -26,18 +26,23 @@
         <input id="search-input" placeholder="Search">
         <select id="version-selector"></select>
     </div>
-    <main id="page"><article><div class='docs' id='collate'>
-<p><code>private</code> <code>collate</code> — <code>function</code></p>
-<div class='doc' id='1'>
-<pre><code>collate(samples)
+    <main id="page"><article><h1 id="installation"><a href="#installation" class="anchor"></a>Installation</h1>
+<h3 id="julia"><a href="#julia" class="anchor"></a>Julia</h3>
+<p>DataLoaders.jl is a package for the <a href="https://julialang.org/">Julia Programming Language</a>. To use the package you need to install Julia, which you can download <a href="https://julialang.org/downloads/">here</a>.</p>
+<h3 id="dataloadersjl"><a href="#dataloadersjl" class="anchor"></a>DataLoaders.jl</h3>
+<p>Julia has a built-in package manager which is used to install packages. Running the installed <code>julia</code> command launches an interactive session. To install DataLoaders.jl, run the following command:</p>
+<pre><code class="language-julia-repl">using Pkg; Pkg.add(&quot;DataLoaders&quot;)
 </code></pre>
-<p>Collates a vector of samples into a single batch. See <a href="../documents/docs/collate.md">collating</a>.</p>
-</div>
-</div>
+<h3 id="enabling-multi-threading"><a href="#enabling-multi-threading" class="anchor"></a>Enabling multi-threading</h3>
+<p>To make use of multi-threaded data loading, you need to start Julia with multiple threads. If starting the <code>julia</code> executable yourself, you can pass a <code>-t &lt;nthreads&gt;</code> argument or set the environment variable <code>JULIA_NUM_THREADS</code> beforehand. To check that you have multiple threads available to you, run:</p>
+<pre><code class="language-julia-repl">julia&gt; Threads.nthreads()
+12
+</code></pre>
+<p>If you’re running Julia in a Jupyter notebook, see <a href="https://julialang.github.io/IJulia.jl/dev/manual/installation/#Installing-additional-Julia-kernels">IJulia.jl’s documentation</a>.</p>
 </article>
         <div id="page-navigation">
-            <a id="previous-page" title="Previous" href="DataLoaders.batchindices.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
-            <a id="next-page" title="Next" href="DataLoaders.eachobsparallel.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="previous-page" title="Previous" href="overview.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.2426 6.34317L14.8284 4.92896L7.75739 12L14.8285 19.0711L16.2427 17.6569L10.5858 12L16.2426 6.34317Z" fill="currentColor" /></svg></a>
+            <a id="next-page" title="Next" href="datacontainers.html"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5858 6.34317L12 4.92896L19.0711 12L12 19.0711L10.5858 17.6569L16.2427 12L10.5858 6.34317Z" fill="currentColor" /></svg></a>
         </div>
     </main>
     <nav id="toc"><ul>

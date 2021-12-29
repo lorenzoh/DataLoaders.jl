@@ -1,5 +1,5 @@
-var PUBLISH_ROOT = '/DataLoaders.jl/0.1.1';
-var PUBLISH_VERSION = "0.1.1";
+var PUBLISH_ROOT = '/DataLoaders.jl/test';
+var PUBLISH_VERSION = "test";
 var PUBLISH_VERSIONS = [
     ["test","/DataLoaders.jl/test/index.html"],
     ["dev","/DataLoaders.jl/dev/index.html"],
