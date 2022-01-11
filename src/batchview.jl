@@ -104,7 +104,7 @@ end
 
 # Utils
 
-_batchsize(batch::Tuple, batchdim) = _batchsize(batch[1], batchdim)
+_batchsize(batch::Union{Tuple,NamedTuple}, batchdim) = _batchsize(batch[1], batchdim)
 _batchsize(batch::Dict, batchdim) = _batchsize(batch[first(keys(batch))], batchdim)
 _batchsize(batch::AbstractArray{T, N}, ::BatchDimLast) where {T, N} = size(batch, N)
 _batchsize(batch::AbstractArray, ::BatchDimFirst) = size(batch, 1)
