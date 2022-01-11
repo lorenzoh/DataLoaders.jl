@@ -40,10 +40,10 @@
 @show nobs(v)
 getobs(v, 1)
 </code></pre>
-<pre><code class="plaintext cell-output cell-stream">v = rand(1:10, 10) = [3, 6, 3, 3, 8, 10, 7, 5, 8, 5]
+<pre><code class="plaintext cell-output cell-stream">v = rand(1:10, 10) = [4, 8, 5, 5, 1, 8, 10, 8, 2, 5]
 nobs(v) = 10
 </code></pre>
-<pre><code class="plaintext cell-output cell-result" class="language-plaintext">3</code></pre>
+<pre><code class="plaintext cell-output cell-result" class="language-plaintext">4</code></pre>
 <p>Multi-dimensional arrays also work, with the last dimension treated as the observation dimension:</p>
 <pre><code cell="main" class="language-julia">a = rand(50, 50, 10)
 summary(getobs(a, 1))
@@ -53,7 +53,7 @@ summary(getobs(a, 1))
 <pre><code cell="main" class="language-julia">data = (v, a)
 getobs(data, 1)
 </code></pre>
-<pre><code class="plaintext cell-output cell-result" class="language-plaintext">(3, [0.8148535039819387 0.7922262999563554 … 0.336305525839971 0.39967133160729174; 0.22876049704979984 0.7795581030006868 … 0.03312495332714205 0.505938500562874; … ; 0.7762865670368284 0.3023074921420861 … 0.054573146229005554 0.5027648033765222; 0.6123445851503997 0.8449596180305357 … 0.08861311036859099 0.261189721176907])</code></pre>
+<pre><code class="plaintext cell-output cell-result" class="language-plaintext">(4, [0.4592707967973244 0.3578318816593635 … 0.21853924125877677 0.6606413220908487; 0.5225348317640557 0.7207189706884178 … 0.6409781586213446 0.42652344920429863; … ; 0.2875357085782613 0.8498932955359353 … 0.23299029162158424 0.6637528395745758; 0.033055655436945885 0.9275565696684813 … 0.7085973499693643 0.2622418614900004])</code></pre>
 <p>You can pass any data container to <a href="../docstrings/DataLoaders.DataLoader.html"><code>DataLoader</code></a> to create an iterator over batches:</p>
 <pre><code class="language-julia">for batch in DataLoader(v, 2)
     @assert size(batch) == (2,)

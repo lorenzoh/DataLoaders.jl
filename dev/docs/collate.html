@@ -35,16 +35,16 @@
 batch = [getobs(data, i) for i in 1:4]
 </code></pre>
 <pre><code class="plaintext cell-output cell-result" class="language-plaintext">4-element Array{Array{Float64,1},1}:
- [0.825500522779612, 0.7487305471392807]
- [0.6294021024892025, 0.3367403081136775]
- [0.3208954018785828, 0.7409486310871891]
- [0.2275798755468028, 0.7462686995849954]</code></pre>
+ [0.31244234956568606, 0.579504387793021]
+ [0.44398793113712065, 0.9527017970659495]
+ [0.5470373317499317, 0.7752700104431431]
+ [0.39888846944123135, 0.9062816186662577]</code></pre>
 <p>Many machine learning models, however, expect an input in a <em>collated</em> format: instead of a nested vector of vectors, we need a single ND-array. DataLoaders.jl provides the <a href="../docstrings/DataLoaders.collate.html"><code>collate</code></a> function for this:</p>
 <pre><code cell="main" class="language-julia">DataLoaders.collate(batch)
 </code></pre>
 <pre><code class="plaintext cell-output cell-result" class="language-plaintext">2×4 Array{Float64,2}:
- 0.825501  0.629402  0.320895  0.22758
- 0.748731  0.33674   0.740949  0.746269</code></pre>
+ 0.312442  0.443988  0.547037  0.398888
+ 0.579504  0.952702  0.77527   0.906282</code></pre>
 <p>As you can see, the batch dimension is the last one by default.</p>
 <h2 id="nested-observations"><a href="#nested-observations" class="anchor"></a>Nested observations</h2>
 <p>The above case only shows how to collate observations that each consist of a single array. In practice, however, observations will often consist of multiple variables like input features and a target variable. For example, we could have an integer indicating the class of an input sample.</p>
@@ -54,14 +54,14 @@ data = (inputs, targets)
 batch = [getobs(data, i) for i in 1:4]
 </code></pre>
 <pre><code class="plaintext cell-output cell-result" class="language-plaintext">4-element Array{Tuple{Array{Float64,1},Int64},1}:
- ([0.276212395389116, 0.9608189992280769], 8)
- ([0.5720011764077295, 0.9643116381641779], 2)
- ([0.29979560667703775, 0.3606803441674109], 5)
- ([0.4650969514727843, 0.9104457365746597], 4)</code></pre>
+ ([0.19833226328399212, 0.4843463522086202], 10)
+ ([0.795382361409825, 0.9521677258359151], 8)
+ ([0.9572156599075914, 0.946353998575655], 10)
+ ([0.9289076554445601, 0.03622421237155482], 1)</code></pre>
 <p>Collating here also works, by keeping the tuple structure and collating each element separately:</p>
 <pre><code cell="main" class="language-julia">DataLoaders.collate(batch)
 </code></pre>
-<pre><code class="plaintext cell-output cell-result" class="language-plaintext">([0.276212395389116 0.5720011764077295 0.29979560667703775 0.4650969514727843; 0.9608189992280769 0.9643116381641779 0.3606803441674109 0.9104457365746597], [8, 2, 5, 4])</code></pre>
+<pre><code class="plaintext cell-output cell-result" class="language-plaintext">([0.19833226328399212 0.795382361409825 0.9572156599075914 0.9289076554445601; 0.4843463522086202 0.9521677258359151 0.946353998575655 0.03622421237155482], [10, 8, 10, 1])</code></pre>
 <p>This is also implemented for <code>NamedTuple</code>s and <code>Dict</code>s. You can also collate nested structures, e.g. a <code>Tuple</code> of <code>Dict</code>s and the structure is preserved. This also works when using <a href="inplaceloading.html">inplace loading</a>.</p>
 </article>
         <div id="page-navigation">
