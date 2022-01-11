@@ -2,7 +2,7 @@ using Test
 using TestSetExtensions
 using DataLoaders
 using DataLoaders:
-    BatchViewCollated, BatchDimLast, BatchDimFirst, WorkerPool, RingBuffer, collate, obsslices
+    BatchViewCollated, BatchDimLast, BatchDimFirst, WorkerPool, RingBuffer, collate, obsslices, _batchsize
 using MLDataPattern
 using LearnBase
 using Random
@@ -47,8 +47,31 @@ end
     @test obs isa Dict
     @test size(obs[:x]) == (5,)
     @test size(obs[:y]) == (1,)
+
+    batch3 = (rand(5,16), rand(3,16))
+    obs = first(obsslices(batch3))
+    @test obs isa Tuple
+    @test size(obs[1]) == (5,)
+    @test size(obs[2]) == (3,)
+
+    batch4 = (a=rand(5,16), b=rand(3,16))
+    obs = first(obsslices(batch4))
+    @test obs isa NamedTuple
+    @test size(obs.a) == (5,)
+    @test size(obs.b) == (3,)
 end
 
+@testset ExtendedTestSet "_batchsize" begin
+    batch = (rand(10,3,16), rand(10,4,16))
+    @test batch isa Tuple
+    @test _batchsize(batch, BatchDimFirst()) == 10
+    @test _batchsize(batch, BatchDimLast())  == 16
+
+    batch = (a=rand(10,3,16), b=rand(10,4,16))
+    @test batch isa NamedTuple
+    @test _batchsize(batch, BatchDimFirst()) == 10
+    @test _batchsize(batch, BatchDimLast())  == 16
+end
 
 @testset ExtendedTestSet "BatchViewCollated" begin
     data = rand(2, 100)
