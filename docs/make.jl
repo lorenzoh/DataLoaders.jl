@@ -1,11 +1,40 @@
-using Publish
+using Pkg
+using Pollen
+
 using DataLoaders
+const PACKAGE = DataLoaders
 
-p = Publish.Project(DataLoaders)
 
-# needed to prevent error when overwriting
-rm("dev", recursive = true, force = true)
-rm(p.env["version"], recursive = true, force = true)
+# Create target folder
+DIR = abspath(mkpath(ARGS[1]))
 
-# build documentation
-deploy(DataLoaders; root = "/DataLoaders.jl", force = true, label = "dev")
+
+# Create Project
+m = PACKAGE
+ms = [PACKAGE,]
+
+
+@info "Creating project..."
+project = Project(
+    Pollen.Rewriter[
+        Pollen.DocumentFolder(pkgdir(m), prefix = "documents"),
+        Pollen.ParseCode(),
+        Pollen.ExecuteCode(),
+        Pollen.PackageDocumentation(ms),
+        Pollen.DocumentGraph(),
+        Pollen.SearchIndex(),
+    ],
+)
+
+@info "Rewriting documents..."
+Pollen.rewritesources!(project)
+
+@info "Writing to disk at \"$DIR\"..."
+builder = Pollen.FileBuilder(
+    Pollen.JSON(),
+    DIR,
+)
+Pollen.build(
+    builder,
+    project,
+)
