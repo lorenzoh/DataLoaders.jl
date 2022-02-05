@@ -1,3 +1,4 @@
 [deps]
+DataLoaders = "2e981812-ef13-4a9c-bfa0-ab13047b12a9"
 ModuleInfo = "3c3ff5e7-c68c-4a09-80d1-9526a1e9878a"
 Pollen = "c88717ad-5130-4874-a664-5a9aba5ec443"
