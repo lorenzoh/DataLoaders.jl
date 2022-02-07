@@ -21,6 +21,7 @@ jobs:
         with:
           repository: lorenzoh/pollenjl-frontend
           path: '.'
+          ref: main
       - uses: actions/setup-node@v2
       - name: Install dependencies
         run: |
