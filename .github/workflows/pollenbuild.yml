@@ -1,0 +1,38 @@
+name: pollenexport
+
+on:
+  push:
+    branches: ['pollen']
+
+jobs:
+  pollen:
+    name: "Pollen documentation build"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: pollen
+          path: static/data
+      - uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+          path: build
+      - uses: actions/checkout@v2
+        with:
+          name: lorenzoh/pollenjl-frontend
+      - uses: actions/setup-node@2
+      - name: Install dependencies
+        run: |
+          npm install
+      - name: Build
+        run: |
+          npm run build
+      - name: Deploy changes
+        run: |
+          cd build
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Deploy documentation (Pollen.jl)"
+          git push
+
