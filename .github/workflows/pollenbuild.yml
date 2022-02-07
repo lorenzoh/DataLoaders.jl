@@ -19,7 +19,7 @@ jobs:
           path: build
       - uses: actions/checkout@v2
         with:
-          name: lorenzoh/pollenjl-frontend
+          repository: lorenzoh/pollenjl-frontend
           path: '.'
       - uses: actions/setup-node@v2
       - name: Install dependencies
