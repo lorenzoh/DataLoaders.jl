@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: pollen
-          path: static/data
+          path: data
       - uses: actions/checkout@v2
         with:
           ref: "gh-pages"
@@ -20,19 +20,25 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: lorenzoh/pollenjl-frontend
-          path: '.'
+          path: frontend
           ref: main
+      - name: Move Pollen data to static folder
+        run: |
+          ls
+          mv data/ frontend/static
       - uses: actions/setup-node@v2
       - name: Install dependencies
         run: |
+          cd frontend
           npm install
       - name: Build
         run: |
+          cd frontend
           npm run build
       - name: Deploy changes
         run: |
           ls -lt
-          cp -r build/** pages
+          cp -r frontend/build/** pages
           cd gh-pages
           git config user.name github-actions
           git config user.email github-actions@github.com
