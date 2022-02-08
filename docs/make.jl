@@ -23,6 +23,7 @@ project = Project(
         Pollen.PackageDocumentation(ms),
         Pollen.DocumentGraph(),
         Pollen.SearchIndex(),
+        Pollen.SaveAttributes((:title,)),
     ],
 )
 
