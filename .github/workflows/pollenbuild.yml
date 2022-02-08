@@ -15,8 +15,8 @@ jobs:
           path: static/data
       - uses: actions/checkout@v2
         with:
-          ref: gh-pages
-          path: gh-pages
+          ref: "gh-pages"
+          path: "pages"
       - uses: actions/checkout@v2
         with:
           repository: lorenzoh/pollenjl-frontend
@@ -31,7 +31,8 @@ jobs:
           npm run build
       - name: Deploy changes
         run: |
-          cp -r build/** gh-pages
+          ls -lt
+          cp -r build/** pages
           cd gh-pages
           git config user.name github-actions
           git config user.email github-actions@github.com
