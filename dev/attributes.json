@@ -1,0 +1,182 @@
+{
+    "references/DataLoaders.BatchDim": {
+        "tag": "documentation",
+        "title": "BatchDim"
+    },
+    "references/DataLoaders.DataLoader": {
+        "tag": "documentation",
+        "title": "DataLoader"
+    },
+    "references/DataLoaders.PoolFailedException": {
+        "tag": "documentation",
+        "title": "PoolFailedException"
+    },
+    "documents/docs/status.md": {
+        "tag": "document",
+        "title": "TODOs"
+    },
+    "documents/docs/ecosystem.md": {
+        "tag": "document",
+        "title": "Ecosystem"
+    },
+    "references/DataLoaders.BufferGetObsParallel": {
+        "tag": "documentation",
+        "title": "BufferGetObsParallel"
+    },
+    "references/DataLoaders.obsslice": {
+        "tag": "documentation",
+        "title": "obsslice"
+    },
+    "references/DataLoaders": {
+        "tag": "documentation",
+        "title": "DataLoaders"
+    },
+    "sourcefiles/DataLoaders/src/DataLoaders.jl": {
+        "tag": "sourcefile",
+        "title": "DataLoaders/src/DataLoaders.jl"
+    },
+    "references/DataLoaders.@pack_BatchViewCollated": {
+        "tag": "documentation",
+        "title": "@pack_BatchViewCollated"
+    },
+    "sourcefiles/DataLoaders/src/workerpool.jl": {
+        "tag": "sourcefile",
+        "title": "DataLoaders/src/workerpool.jl"
+    },
+    "documents/docs/quickstartpytorch.md": {
+        "tag": "document",
+        "title": "Comparison to PyTorch"
+    },
+    "references/DataLoaders.run": {
+        "tag": "documentation",
+        "title": "run"
+    },
+    "references/DataLoaders._batchsize": {
+        "tag": "documentation",
+        "title": "_batchsize"
+    },
+    "references/DataLoaders.BatchDimLast": {
+        "tag": "documentation",
+        "title": "BatchDimLast"
+    },
+    "documents/docs/howto/workingwith.md": {
+        "tag": "document",
+        "title": "workingwith"
+    },
+    "references/DataLoaders.RingBuffer": {
+        "tag": "documentation",
+        "title": "RingBuffer"
+    },
+    "references/DataLoaders.batchindices": {
+        "tag": "documentation",
+        "title": "batchindices"
+    },
+    "documents/README.md": {
+        "tag": "document",
+        "title": "DataLoaders.jl"
+    },
+    "documents/docs/collate.md": {
+        "tag": "document",
+        "title": "Collating"
+    },
+    "documents/docs/inplaceloading.md": {
+        "tag": "document",
+        "title": "Inplace loading"
+    },
+    "documents/docs/interface.md": {
+        "tag": "document",
+        "title": "Data container interface"
+    },
+    "references/DataLoaders.GetObsParallel": {
+        "tag": "documentation",
+        "title": "GetObsParallel"
+    },
+    "documents/docs/overview.md": {
+        "tag": "document",
+        "title": "Overview"
+    },
+    "sourcefiles/DataLoaders/src/ringbuffer.jl": {
+        "tag": "sourcefile",
+        "title": "DataLoaders/src/ringbuffer.jl"
+    },
+    "references/DataLoaders.PoolState": {
+        "tag": "documentation",
+        "title": "PoolState"
+    },
+    "references/DataLoaders.BatchViewCollated": {
+        "tag": "documentation",
+        "title": "BatchViewCollated"
+    },
+    "references/DataLoaders.Running": {
+        "tag": "documentation",
+        "title": "Running"
+    },
+    "sourcefiles/DataLoaders/src/collate.jl": {
+        "tag": "sourcefile",
+        "title": "DataLoaders/src/collate.jl"
+    },
+    "references/DataLoaders.Done": {
+        "tag": "documentation",
+        "title": "Done"
+    },
+    "documents/docs/datacontainers.md": {
+        "tag": "document",
+        "title": "Data containers"
+    },
+    "references/DataLoaders.BatchDimFirst": {
+        "tag": "documentation",
+        "title": "BatchDimFirst"
+    },
+    "sourcefiles/DataLoaders/src/batchview.jl": {
+        "tag": "sourcefile",
+        "title": "DataLoaders/src/batchview.jl"
+    },
+    "references/DataLoaders.obsslices": {
+        "tag": "documentation",
+        "title": "obsslices"
+    },
+    "references/DataLoaders.WorkerPool": {
+        "tag": "documentation",
+        "title": "WorkerPool"
+    },
+    "references/DataLoaders.batchviewcollated": {
+        "tag": "documentation",
+        "title": "batchviewcollated"
+    },
+    "references/DataLoaders.collate": {
+        "tag": "documentation",
+        "title": "collate"
+    },
+    "references/DataLoaders.eachobsparallel": {
+        "tag": "documentation",
+        "title": "eachobsparallel"
+    },
+    "references/DataLoaders.@unpack_BatchViewCollated": {
+        "tag": "documentation",
+        "title": "@unpack_BatchViewCollated"
+    },
+    "documents/docs/setup.md": {
+        "tag": "document",
+        "title": "Installation"
+    },
+    "documents/docs/shuffling.md": {
+        "tag": "document",
+        "title": "Shuffling, subsetting, splitting"
+    },
+    "documents/toc.md": {
+        "tag": "document",
+        "title": "toc"
+    },
+    "references/DataLoaders.copyrec!": {
+        "tag": "documentation",
+        "title": "copyrec!"
+    },
+    "references/DataLoaders.Failed": {
+        "tag": "documentation",
+        "title": "Failed"
+    },
+    "sourcefiles/DataLoaders/src/loaders.jl": {
+        "tag": "sourcefile",
+        "title": "DataLoaders/src/loaders.jl"
+    }
+}
