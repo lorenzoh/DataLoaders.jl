@@ -31,7 +31,7 @@ jobs:
           npm run build
       - name: Deploy changes
         run: |
-          cp -r build/** gh-pages/**
+          cp -r build/** gh-pages
           cd gh-pages
           git config user.name github-actions
           git config user.email github-actions@github.com
