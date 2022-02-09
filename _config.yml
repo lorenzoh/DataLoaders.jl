@@ -1,2 +1,0 @@
-include: ['**/__layout*', 'test/internal/pages/__layout.svelte-06101519.js']
-keep_files: ['**/__layout*', 'test/internal/pages/__layout.svelte-06101519.js']
