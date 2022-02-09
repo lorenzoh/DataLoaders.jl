@@ -25,7 +25,7 @@ jobs:
       - name: Move Pollen data to static folder
         run: |
           ls
-          mv data/ frontend/static
+          cp -r data frontend/static/
       - uses: actions/setup-node@v2
       - name: Install dependencies
         run: |
