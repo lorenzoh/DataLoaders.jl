@@ -39,7 +39,7 @@ jobs:
       - name: Build search index
         run: |
           cd frontend
-          cat static/data/dev/documents.json | node buildindex.cjs > static/data/dev/index.json
+          cat static/data/dev/documents.json | node buildindex.cjs > ../data/dev/index.json
       - name: Deploy changes
         run: |
           ls -lt
