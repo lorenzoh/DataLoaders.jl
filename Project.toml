@@ -24,3 +24,8 @@ title = "DataLoaders.jl"
 
     [publish.html]
     css = ["docs/custom.css"]
+
+
+[pollen]
+title = "DataLoaders.jl"
+url = "https://github.com/FluxML/FluxTraining.jl"

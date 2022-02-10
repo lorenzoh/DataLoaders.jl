@@ -24,6 +24,7 @@ project = Project(
         Pollen.DocumentGraph(),
         Pollen.SearchIndex(),
         Pollen.SaveAttributes((:title,)),
+        Pollen.LoadFrontendConfig(pkgdir(m))
     ],
 )
 

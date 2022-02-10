@@ -1,0 +1,16 @@
+{
+    "Overview": "documents/README.md",
+    "Tutorials": [],
+    "Background": [
+        "documents/docs/datacontainers.md",
+        "documents/docs/collate.md",
+        "documents/docs/quickstartpytorch.md"
+    ],
+    "Reference": {
+        "Module": "references/DataLoaders",
+        "Source": "sourcefiles/DataLoaders/src/DataLoaders.jl",
+        "Interfaces": [
+            "documents/docs/interface.md"
+        ]
+    }
+}
