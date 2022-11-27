@@ -1,5 +1,8 @@
 # DataLoaders.jl
 
+
+**This package is deprecated and its functionality has been moved into [MLUtils.jl](https://github.com/JuliaML/MLUtils.jl) as [`MLUtils.DataLoader`](https://juliaml.github.io/MLUtils.jl/stable/api/#MLUtils.DataLoader). This package is still functional but development continues in MLUtils.jl. There are slight differences in the API; see the documentation linked above for more details.**
+
 [Documentation (latest)](https://lorenzoh.github.io/DataLoaders.jl/dev)
 
 A Julia package implementing performant data loading for deep learning on out-of-memory datasets that. Works like PyTorch's `DataLoader`.
